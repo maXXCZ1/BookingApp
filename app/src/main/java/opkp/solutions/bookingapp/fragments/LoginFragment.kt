@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentLoginBinding
+import opkp.solutions.bookingapp.viewmodels.LoginViewModel
 
 
 /**
@@ -19,13 +21,13 @@ import opkp.solutions.bookingapp.databinding.FragmentLoginBinding
  */
 class LoginFragment : Fragment() {
 
-    private var mAuth: FirebaseAuth? = null
+    private lateinit var auth: FirebaseAuth
     private var currentUser: FirebaseUser? = null
+    private lateinit var viewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        auth = FirebaseAuth.getInstance()
     }
 
     override fun onCreateView(
@@ -41,17 +43,16 @@ class LoginFragment : Fragment() {
             false
         )
 
-        mAuth = FirebaseAuth.getInstance()
-        currentUser = mAuth?.currentUser
-
         binding.loginButton.setOnClickListener {
             //TODO validate database account and navigate to CalendarFragment
+            val email = binding.emailEditext.editText.toString()
+            val password = binding.passwordEditttext.editText.toString()
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCalendarFragment())
         }
 
         binding.createAccountButton.setOnClickListener{
-            //TODO navigate to CreateAccountFragment
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCreateAccountFragment())
         }
-
         return binding.root
     }
 
@@ -59,7 +60,10 @@ class LoginFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-//        val currentUser = mAuth?.currentUser
+        val currentUser = auth.currentUser
 
+        if (currentUser != null) {
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCalendarFragment())
+        }
     }
 }

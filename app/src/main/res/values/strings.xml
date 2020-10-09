@@ -10,4 +10,7 @@
     <string name="email_textfield_hinttext">Enter email</string>
     <string name="label">test</string>
     <string name="create_account_button_text">Create new account</string>
+    <string name="create_account_text">Create account</string>
+    <string name="create_password_edittext_hint">Create password</string>
+    <string name="create_email_edittext_hint">Create email</string>
 </resources>

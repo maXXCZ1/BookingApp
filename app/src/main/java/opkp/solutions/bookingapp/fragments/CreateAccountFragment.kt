@@ -1,16 +1,22 @@
 package opkp.solutions.bookingapp.fragments
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import opkp.solutions.bookingapp.R
+import opkp.solutions.bookingapp.databinding.FragmentCreateAccountBinding
+import opkp.solutions.bookingapp.viewmodels.CreateAccountViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TAG = "CreateAccountFragment"
 
 /**
  * A simple [Fragment] subclass.
@@ -18,16 +24,14 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class CreateAccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var viewModel: CreateAccountViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -35,26 +39,45 @@ class CreateAccountFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_account, container, false)
+        val binding = DataBindingUtil.inflate<FragmentCreateAccountBinding>(inflater, R.layout.fragment_create_account, container, false)
+
+        viewModel = ViewModelProvider(this).get(CreateAccountViewModel::class.java)
+
+
+
+        binding.createNewAccountButton.setOnClickListener {
+            val email= binding.textInput4.text.toString()
+            val password = binding.textInput3.text.toString()
+            Log.d(opkp.solutions.bookingapp.fragments.TAG, "email is $email, password is $password")
+            registerUser(email, password)
+        }
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CreateAccountFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CreateAccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun registerUser(email: String, password: String) {
+
+        auth = FirebaseAuth.getInstance()
+
+        Log.d(opkp.solutions.bookingapp.fragments.TAG, "email is $email, password is $password")
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "createUserWithEmail:success")
+                    val user = auth.currentUser
+                    findNavController().navigate(CreateAccountFragmentDirections.actionCreateAccountFragmentToLoginFragment())
+
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    Toast.makeText(requireActivity(), "Creation failed. Try again please",
+                        Toast.LENGTH_SHORT).show()
+                    // TODO
                 }
+
+
             }
     }
+
 }
