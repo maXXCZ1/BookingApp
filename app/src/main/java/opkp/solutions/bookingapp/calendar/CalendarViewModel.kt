@@ -1,4 +1,4 @@
-package opkp.solutions.bookingapp.viewmodels
+package opkp.solutions.bookingapp.calendar
 
 import androidx.lifecycle.ViewModel
 

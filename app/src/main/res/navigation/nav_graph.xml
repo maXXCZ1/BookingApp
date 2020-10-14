@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="opkp.solutions.bookingapp.fragments.LoginFragment"
+        android:name="opkp.solutions.bookingapp.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/createAccountFragment"
-        android:name="opkp.solutions.bookingapp.fragments.CreateAccountFragment"
+        android:name="opkp.solutions.bookingapp.createaccount.CreateAccountFragment"
         android:label="CreateAccountFragment" >
         <action
             android:id="@+id/action_createAccountFragment_to_loginFragment"
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/calendarFragment"
-        android:name="opkp.solutions.bookingapp.fragments.CalendarFragment"
+        android:name="opkp.solutions.bookingapp.calendar.CalendarFragment"
         android:label="fragment_calendar"
         tools:layout="@layout/fragment_calendar" >
         <action

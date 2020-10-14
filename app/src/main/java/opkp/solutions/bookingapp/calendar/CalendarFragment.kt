@@ -1,4 +1,4 @@
-package opkp.solutions.bookingapp.fragments
+package opkp.solutions.bookingapp.calendar
 
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentCalendarBinding
+
 
 private const val  TAG = "CalendarFragment"
 /**
@@ -21,10 +21,12 @@ private const val  TAG = "CalendarFragment"
  */
 class CalendarFragment : Fragment() {
 
+    private lateinit var mauth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        mauth = FirebaseAuth.getInstance()
     }
 
     override fun onCreateView(
@@ -35,11 +37,17 @@ class CalendarFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentCalendarBinding>(inflater, R.layout.fragment_calendar, container, false)
 
         binding.button.setOnClickListener{
+            getUserInfo()
             FirebaseAuth.getInstance().signOut()
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToLoginFragment())
         }
-    Log.d(TAG, "testujeme" )
-    return binding.root
+        return binding.root
+    }
+
+    private fun getUserInfo() {
+        val user = FirebaseAuth.getInstance().currentUser
+        val email = user?.email
+        Log.d(TAG, "email is $email")
     }
 
 }

@@ -7,13 +7,13 @@
 
         <variable
             name="loginviewmodel"
-            type="opkp.solutions.bookingapp.viewmodels.LoginViewModel" />
+            type="opkp.solutions.bookingapp.login.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.LoginFragment">
+        tools:context=".login.LoginFragment">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/email_editext"
@@ -36,6 +36,7 @@
                 android:id="@+id/text_input_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
                 android:imeOptions="actionNext"
                 android:singleLine="true"
                 android:textColorHint="@color/primaryTextColor"

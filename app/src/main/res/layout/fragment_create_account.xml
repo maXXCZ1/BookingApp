@@ -3,13 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+        <data>
+            <variable
+                name="viewModel"
+                type="opkp.solutions.bookingapp.createaccount.CreateAccountViewModel"/>
+        </data>
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.CreateAccountFragment">
+        tools:context=".createaccount.CreateAccountFragment">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/create_email_edittext"
+            android:id="@+id/create_email_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -23,13 +31,17 @@
             app:boxCornerRadiusTopStart="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:errorEnabled="true"
+            app:helperTextEnabled="true"
+            app:helperText="@string/create_email_helpertext">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_input_4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
                 android:singleLine="true"
                 android:textColorHint="@color/primaryTextColor"
                 android:textSize="14sp" />
@@ -37,7 +49,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/create_password_edittext"
+            android:id="@+id/create_password_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,11 +60,13 @@
             app:boxCornerRadiusTopEnd="8dp"
             app:boxCornerRadiusTopStart="8dp"
             app:counterEnabled="true"
-            app:counterMaxLength="30"
-            app:layout_constraintEnd_toEndOf="@+id/create_email_edittext"
-            app:layout_constraintStart_toStartOf="@+id/create_email_edittext"
-            app:layout_constraintTop_toBottomOf="@+id/create_email_edittext"
-            app:passwordToggleEnabled="true">
+            app:layout_constraintEnd_toEndOf="@+id/create_email_layout"
+            app:layout_constraintStart_toStartOf="@+id/create_email_layout"
+            app:layout_constraintTop_toBottomOf="@+id/create_email_layout"
+            app:passwordToggleEnabled="true"
+            app:errorEnabled="true"
+            app:helperTextEnabled="true"
+            app:helperText="@string/create_password_helpertext">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_input_3"
@@ -77,6 +91,6 @@
             app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_password_edittext" />
+            app:layout_constraintTop_toBottomOf="@+id/create_password_layout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

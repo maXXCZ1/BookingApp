@@ -13,4 +13,6 @@
     <string name="create_account_text">Create account</string>
     <string name="create_password_edittext_hint">Create password</string>
     <string name="create_email_edittext_hint">Create email</string>
+    <string name="create_email_helpertext">Example: your@email.com</string>
+    <string name="create_password_helpertext">Minimum 6 characters contains: [a-z,A-Z,0-9]</string>
 </resources>
