@@ -31,9 +31,29 @@
         android:id="@+id/calendarFragment"
         android:name="opkp.solutions.bookingapp.calendar.CalendarFragment"
         android:label="fragment_calendar"
-        tools:layout="@layout/fragment_calendar" >
+        tools:layout="@layout/fragment_calendar">
         <action
             android:id="@+id/action_calendarFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_calendarFragment_to_timeFragment"
+            app:destination="@id/timeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/timeFragment"
+        android:name="opkp.solutions.bookingapp.time.TimeFragment"
+        android:label="fragment_time"
+        tools:layout="@layout/fragment_time">
+        <action
+            android:id="@+id/action_timeFragment_to_calendarFragment"
+            app:destination="@id/calendarFragment" />
+        <action
+            android:id="@+id/action_timeFragment_to_courtFragment"
+            app:destination="@id/courtFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/courtFragment"
+        android:name="opkp.solutions.bookingapp.court.CourtFragment"
+        android:label="fragment_court"
+        tools:layout="@layout/fragment_court" />
 </navigation>

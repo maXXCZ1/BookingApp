@@ -10,14 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isEmpty
-import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseUser
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentCreateAccountBinding
+
 
 private const val TAG = "CreateAccountFragment"
 
@@ -29,12 +30,12 @@ private const val TAG = "CreateAccountFragment"
 class CreateAccountFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var viewModel: CreateAccountViewModel
+
     private lateinit var binding: FragmentCreateAccountBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        auth = FirebaseAuth.getInstance()
     }
 
     override fun onCreateView(
@@ -43,15 +44,12 @@ class CreateAccountFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_create_account, container, false)
-        viewModel = ViewModelProvider(this).get(CreateAccountViewModel::class.java)
+
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
-
-        auth = FirebaseAuth.getInstance()
 
 
+        binding.textInput4.requestFocus()
 
-        //TODO takhle nejak sjem to asi zkousel myslim ale nefungovalo mi to
         binding.textInput3.filters = arrayOf(object : InputFilter {
             override fun filter(
                 p0: CharSequence?,
@@ -83,12 +81,11 @@ class CreateAccountFragment : Fragment() {
 
         if (email.isEmpty()) {
             binding.createEmailLayout.error = "Email must not be empty!"
-        } else if (email.isNotEmpty() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.createEmailLayout.error = "Invalid email format!"
         } else {
             binding.createEmailLayout.error = null
             binding.createEmailLayout.helperText = "Correct input"
-        }
 
         if (password.isEmpty()) {
             binding.createPasswordLayout.error = "Password must not be empty!"
@@ -98,31 +95,64 @@ class CreateAccountFragment : Fragment() {
         } else {
             binding.createPasswordLayout.error = null
             binding.createPasswordLayout.helperText = "Correct input"
-
             createUser(email, password)
         }
-
+        }
 
     }
-
-
-
 
     private fun createUser(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                findNavController().navigate(CreateAccountFragmentDirections.actionCreateAccountFragmentToLoginFragment())
+                    auth.currentUser?.sendEmailVerification()?.addOnCompleteListener(requireActivity()) { verification  ->
+                        if (verification.isSuccessful) {
+                            Log.d(TAG, "Verification email successfully sent.")       // Sign in success, update UI with the signed-in user's information
+                            val user = auth.currentUser
+                            updateUI(user)
+                        } else {
+                            Toast.makeText(activity, "Cannot send verification email.",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(activity, "Creation failed. Try again please",
-                        Toast.LENGTH_SHORT).show()
-                    // TODO
-                }
+                    val exception = task.exception as FirebaseAuthException
+                    Log.w(TAG, "createUserWithEmail: failure", task.exception)
+
+                    when(exception.errorCode) {
+                        "ERROR_EMAIL_ALREADY_IN_USE" ->
+                            Toast.makeText(activity, "Email already in use, try different please.",
+                            Toast.LENGTH_SHORT).show()
+
+                        "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" ->
+                            Toast.makeText(activity, "Account already exists with same email but different sign-in credentials.",
+                                Toast.LENGTH_SHORT).show()
+
+                        else ->
+                            Toast.makeText(activity, "${task.exception?.message} Try again please",
+                                Toast.LENGTH_SHORT).show()
+                    }
+                    }
             }
+    }
+
+    private fun updateUI(user: FirebaseUser?) {
+
+        if (user != null) {
+            findNavController().navigate(CreateAccountFragmentDirections.actionCreateAccountFragmentToLoginFragment())
+            Toast.makeText(
+                activity, "Account successfully created, verify your email address",
+                Toast.LENGTH_SHORT
+            ).show()
+        }else {
+            Toast.makeText(
+                activity, "Account creation failed, please try again",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
     }
 }
 

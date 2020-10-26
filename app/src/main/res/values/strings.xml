@@ -14,5 +14,23 @@
     <string name="create_password_edittext_hint">Create password</string>
     <string name="create_email_edittext_hint">Create email</string>
     <string name="create_email_helpertext">Example: your@email.com</string>
-    <string name="create_password_helpertext">Minimum 6 characters contains: [a-z,A-Z,0-9]</string>
+    <string name="create_password_helpertext">Minimum 6 characters contains: [a–z,A–Z,0–9]</string>
+    <string name="logout_button_text">Logout</string>
+    <string name="button_text_next">Next</string>
+    <string name="previous">previous</string>
+    <string name="clock_contentdesc">Simplified clock image</string>
+    <string name="timeframe_text">Timeframe</string>
+    <string name="status_text">status</string>
+    <string name="button_book">book</string>
+    <string name="im_court1_contentdesc">Image of squash court number 1</string>
+    <string name="im_court2_contentdesc">Image of squash court number 2</string>
+    <string name="im_court3_contentdesc">Image of squash court number 3</string>
+    <string name="im_court4_contentdesc">Image of squash court number 4</string>
+
+    <string-array name="stepview_entries">
+        <item>Day</item>
+        <item>Time</item>
+        <item>Court</item>
+    </string-array>
+
 </resources>

@@ -1,0 +1,33 @@
+<vector android:height="24dp" android:viewportHeight="62"
+    android:viewportWidth="62" android:width="24dp"
+    xmlns:aapt="http://schemas.android.com/aapt" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:pathData="m60.5906,32.4015a29.0228,29.0228 0,1 0,-58.0456 0,29.0228 29.0228,0 1,0 58.0456,0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:centerX="31.567799"
+                android:centerY="32.40152"
+                android:gradientRadius="29.022799" android:type="radial">
+                <item android:color="#FFC0C0C0" android:offset="0"/>
+                <item android:color="#FFC0C0C0" android:offset="0.88"/>
+                <item android:color="#00C0C0C0" android:offset="1"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="m56.5583,30.8623a26.5379,26.5379 0,1 0,-53.0758 0,26.5379 26.5379,0 1,0 53.0758,0" android:strokeWidth="1.9444">
+        <aapt:attr name="android:fillColor">
+            <gradient android:endX="20.7774" android:endY="52.449528"
+                android:startX="52.42125" android:startY="-14.641935" android:type="linear">
+                <item android:color="#FFD8EBFF" android:offset="0"/>
+                <item android:color="#FF4FA9FF" android:offset="1"/>
+            </gradient>
+        </aapt:attr>
+        <aapt:attr name="android:strokeColor">
+            <gradient android:endX="7.953947" android:endY="15.688393"
+                android:startX="54.202785" android:startY="41.33242" android:type="linear">
+                <item android:color="#FF2B79E0" android:offset="0"/>
+                <item android:color="#FF008DF7" android:offset="1"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#fff" android:pathData="m33.784,36.11h-7.9511v-1.0948c0,-1.2214 0.2423,-2.3013 0.7268,-3.2397 0.4845,-0.9533 1.505,-2.1598 3.0615,-3.6196l1.4096,-1.2959c0.8369,-0.7745 1.4463,-1.5044 1.8281,-2.1896 0.3964,-0.6852 0.5946,-1.3704 0.5947,-2.0556 -0,-1.0426 -0.3524,-1.8544 -1.0572,-2.4354 -0.7048,-0.5958 -1.6886,-0.8937 -2.9514,-0.8937 -1.1894,0 -2.4742,0.2533 -3.8544,0.7597 -1.3802,0.4916 -2.8192,1.2289 -4.3169,2.212v-7.0157c1.7767,-0.6256 3.3992,-1.0873 4.8676,-1.3853s2.8853,-0.4468 4.2509,-0.4469c3.5827,0 6.3139,0.7448 8.1934,2.2343 1.8794,1.4747 2.8192,3.6345 2.8192,6.4795 -0,1.4598 -0.2863,2.7706 -0.859,3.9324 -0.5727,1.147 -1.5491,2.3833 -2.9293,3.7089l-1.4096,1.2736c-0.9985,0.9235 -1.6519,1.6683 -1.9602,2.2343 -0.3084,0.5511 -0.4625,1.1618 -0.4625,1.8321v1.0054m-7.4527,4.6492 l7.1066,-0.0879 0.1298,6.6995h-7.3021"/>
+</vector>

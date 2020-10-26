@@ -30,7 +30,10 @@
             app:boxCornerRadiusTopStart="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:errorEnabled="true"
+            app:helperTextEnabled="true"
+            app:helperText="@string/create_email_helpertext">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_input_2"
@@ -52,7 +55,6 @@
             android:layout_marginTop="8dp"
             android:hint="@string/password_textfield_hinttext"
             app:counterEnabled="true"
-            app:counterMaxLength="30"
             app:boxCornerRadiusBottomEnd="8dp"
             app:boxCornerRadiusBottomStart="8dp"
             app:boxCornerRadiusTopEnd="8dp"
@@ -60,7 +62,10 @@
             app:layout_constraintEnd_toEndOf="@+id/email_editext"
             app:layout_constraintStart_toStartOf="@+id/email_editext"
             app:layout_constraintTop_toBottomOf="@+id/email_editext"
-            app:passwordToggleEnabled="true">
+            app:passwordToggleEnabled="true"
+            app:errorEnabled="true"
+            app:helperTextEnabled="true"
+            app:helperText="@string/create_password_helpertext">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_input_1"

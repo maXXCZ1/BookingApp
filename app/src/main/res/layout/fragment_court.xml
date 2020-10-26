@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".court.CourtFragment">
+
+        <params.com.stepview.StatusViewScroller
+            android:id="@+id/statusview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:entries="@array/stepview_entries"
+            app:circleColor="@color/secondaryColor"
+            app:circleColorCurrent="@color/secondaryColor"
+            app:circleColorIncomplete="@android:color/background_light"
+            app:circleColorType="fillStroke"
+            app:completeDrawable="@drawable/ic_complete"
+            app:currentCount="3"
+            app:drawLabels="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lineColor="@android:color/black"
+            app:stepCount="3"
+            app:textSizeLabels="12sp">
+
+        </params.com.stepview.StatusViewScroller>
+
+        <Button
+            android:id="@+id/button_previous2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/previous"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button_book"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/button_book"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/button_book"
+            app:layout_constraintBaseline_toBaselineOf="@+id/button_previous2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/button_previous2" />
+
+        <ImageView
+            android:id="@+id/im_court1"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="@string/im_court1_contentdesc"
+            app:layout_constraintBottom_toTopOf="@+id/im_court3"
+            app:layout_constraintEnd_toStartOf="@+id/im_court2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusview"
+            app:srcCompat="@drawable/court1" />
+
+        <ImageView
+            android:id="@+id/im_court2"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="@string/im_court2_contentdesc"
+            app:layout_constraintBottom_toTopOf="@+id/im_court4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/im_court1"
+            app:layout_constraintTop_toBottomOf="@+id/statusview"
+            app:srcCompat="@drawable/court2" />
+
+        <ImageView
+            android:id="@+id/im_court3"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="@string/im_court4_contentdesc"
+            app:layout_constraintBottom_toTopOf="@+id/button_previous2"
+            app:layout_constraintEnd_toStartOf="@+id/im_court4"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/im_court1"
+            app:srcCompat="@drawable/court3" />
+
+        <ImageView
+            android:id="@+id/im_court4"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="@string/im_court3_contentdesc"
+            app:layout_constraintBottom_toTopOf="@+id/button_book"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/im_court3"
+            app:layout_constraintTop_toBottomOf="@+id/im_court2"
+            app:srcCompat="@drawable/court4" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
