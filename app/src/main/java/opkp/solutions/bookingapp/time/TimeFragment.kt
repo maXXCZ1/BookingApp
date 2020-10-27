@@ -1,24 +1,17 @@
 package opkp.solutions.bookingapp.time
 
 
-import android.content.Context
-import android.graphics.Color
-import android.graphics.Color.RED
-import android.icu.text.RelativeDateTimeFormatter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.recyclerview_time_item.*
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.TimeItemAdapter
 import opkp.solutions.bookingapp.databinding.FragmentTimeBinding

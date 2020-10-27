@@ -2,8 +2,6 @@ package opkp.solutions.bookingapp.viewmodels
 
 
 import android.annotation.SuppressLint
-import android.graphics.Color.RED
-import android.graphics.Color.WHITE
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -78,7 +76,7 @@ class SharedViewModel : ViewModel() {
 
     fun generateTimeDataList(pickedDate: String): List<TimeData> {
         itemList = emptyList()
-        var startHour = 0
+        val startHour: Int
         Log.d(
             TAG,
             "GenerateTimeDataList started: currentDayFormatted is: $currentDateFormatted, pickedDate is $pickedDate"
@@ -90,18 +88,20 @@ class SharedViewModel : ViewModel() {
         val currentMinutes = calendarInstance.get(Calendar.MINUTE)
         Log.d(TAG, "current hour is: $currentHour, current minutes are $currentMinutes")
 
-        if (currentHour <= 6) {
-                startHour = 7
-        } else {
-            if (currentMinutes in 0..30) {
-                startHour = currentHour + 1
-            } else {
-                startHour = currentHour + 2
-            }
-        }
 
         if (pickedDate == currentDateFormatted) {
             linearLayout = true
+            //TODO this if+if/else+else might be above pickedDate=currentForamtted
+            if (currentHour <= 6) {
+                startHour = 7
+            } else {
+                if (currentMinutes in 0..30) {
+                    startHour = currentHour + 1
+                } else {
+                    startHour = currentHour + 2
+                }
+            }
+
             if (startHour > 21) {
                 val item = TimeData(
                     R.drawable.ic_clock,
