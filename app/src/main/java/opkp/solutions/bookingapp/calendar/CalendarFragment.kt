@@ -29,7 +29,7 @@ class CalendarFragment : Fragment() {
     private lateinit var currentUser: FirebaseUser
     private lateinit var viewModel: SharedViewModel
     private lateinit var binding: FragmentCalendarBinding
-    var date: String = ""
+    private var date: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

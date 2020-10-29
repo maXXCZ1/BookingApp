@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.TimeItemAdapter
 import opkp.solutions.bookingapp.databinding.FragmentTimeBinding
+import opkp.solutions.bookingapp.databinding.RecyclerviewTimeItemBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 
 
@@ -31,6 +33,7 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
     private lateinit var viewModel: SharedViewModel
     private lateinit var adapter: TimeItemAdapter
     private lateinit var binding: FragmentTimeBinding
+    private var itemClick = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,24 +58,22 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
         binding.timeitemRecyclerview.adapter = adapter
         if(viewModel.linearLayout) {
             binding.timeitemRecyclerview.layoutManager = LinearLayoutManager(requireActivity())
-//            viewModel.itemList.
+
         } else {
             binding.timeitemRecyclerview.layoutManager = GridLayoutManager(requireActivity(), 2)
         }
         binding.timeitemRecyclerview.setHasFixedSize(true)
 
+
         binding.buttonPrevious.setOnClickListener {
             findNavController().navigate(TimeFragmentDirections.actionTimeFragmentToCalendarFragment())
         }
 
-        if(viewModel.itemList.size == 1) {
-            binding.buttonNext.isEnabled = false
+        binding.buttonNext.isEnabled = itemClick != 0
 
-        }
         binding.buttonNext.setOnClickListener {
-
-            findNavController().navigate(TimeFragmentDirections.actionTimeFragmentToCourtFragment())
-        }
+                findNavController().navigate(TimeFragmentDirections.actionTimeFragmentToCourtFragment())
+            }
 
         return binding.root
     }
@@ -80,22 +81,38 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
     override fun onItemClick(position: Int) {
 
         val item = viewModel.itemList[position]
-        if(item.status == "Unavailable") {
-            binding.timeitemRecyclerview.isEnabled = false
-        }
+        Log.d(TAG, "pickedTimeSlot is ${viewModel.pickedTimeSlot}, position is $position")
 
-        if (item.status != "Chosen") {
-            item.status = "Chosen"
-            item.layoutBG = R.drawable.customborder_red
+                if (item.status == "Unavailable") {
+                    binding.timeitemRecyclerview.isEnabled = false
+                }
 
-            viewModel.itemList[position].status = "Chosen"
+                if (item.status != "Chosen" && itemClick == 0) {
+                    item.status = "Chosen"
+                    item.layoutBG = R.drawable.customborder_red
+                    viewModel.pickedTimeSlot = (viewModel.itemList[position].time)
+                    itemClick = 1
+//                    if (viewModel.pickedTimeSlot != "")
+                    binding.buttonNext.isEnabled = true
 
-        } else {
-            item.status = "Not Booked"
-            item.layoutBG = R.drawable.customborder
-        }
-        Log.d(TAG, "status of clicked item is ${viewModel.itemList[position].status}")
+                } else {
+                    Log.d(TAG, "$itemClick is itemClick")
+
+                    if (item.status == "Chosen" && itemClick == 1) {
+                        itemClick = 0
+                        item.status = "Not booked"
+                        viewModel.pickedTimeSlot = ""
+                        item.layoutBG = R.drawable.customborder
+                        binding.buttonNext.isEnabled = false
+
+                    } else Toast.makeText(requireContext(), "You can pick only one time slot.", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "$itemClick is itemClick")
+                }
+
+        Log.d(TAG, "Time slot is: ${viewModel.pickedTimeSlot} status of clicked item is ${viewModel.itemList[position].status}, itemClick is $itemClick")
         adapter.notifyItemChanged(position)
 
     }
+
 }
+

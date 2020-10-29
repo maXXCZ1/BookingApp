@@ -19,8 +19,8 @@ class SharedViewModel : ViewModel() {
     private lateinit var currentDateFormatted: String
     var itemList = listOf<TimeData>()
     var pickedDate = ""
-    var pickedTime = listOf<String>()
-    var pickedCourt: Int = 0
+    var pickedTimeSlot: String = ""
+    var pickedCourt = mutableListOf<Int>()
     var linearLayout = false
 
     val finalDate = MutableLiveData<String>()
@@ -95,10 +95,10 @@ class SharedViewModel : ViewModel() {
             if (currentHour <= 6) {
                 startHour = 7
             } else {
-                if (currentMinutes in 0..30) {
-                    startHour = currentHour + 1
+                startHour = if (currentMinutes in 0..30) {
+                    currentHour + 1
                 } else {
-                    startHour = currentHour + 2
+                    currentHour + 2
                 }
             }
 
