@@ -13,12 +13,6 @@ import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentCourtBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-
 private const val TAG = "CourtFragment"
 /**
  * A simple [Fragment] subclass.
@@ -29,6 +23,9 @@ class CourtFragment : Fragment(){
 
     private lateinit var binding: FragmentCourtBinding
     private lateinit var viewModel: SharedViewModel
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,33 +39,63 @@ class CourtFragment : Fragment(){
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate<FragmentCourtBinding>(inflater, R.layout.fragment_court, container, false)
 
-        var itemClick1 = 0
-        var itemClick2 = 0
-        var itemClick3 = 0
-        var itemClick4 = 0
+
 
        binding.imCourt1.setOnClickListener {
-            onCourtClick(1, itemClick1)
-            itemClick1++
+           if (!viewModel.itemClick1) {
+               onCourtClick(1, viewModel.itemClick1)
+               viewModel.itemClick1 = true
+           } else {
+               onCourtClick(1, viewModel.itemClick1)
+               viewModel.itemClick1 = false
+           }
        }
         binding.imCourt2.setOnClickListener {
-            onCourtClick(2, itemClick2)
-            itemClick2++
+            if (!viewModel.itemClick2) {
+                onCourtClick(2, viewModel.itemClick2)
+                viewModel.itemClick2 = true
+            } else {
+                onCourtClick(2, viewModel.itemClick2)
+                viewModel.itemClick2 = false
+            }
        }
         binding.imCourt3.setOnClickListener {
-            onCourtClick(3, itemClick3)
-            itemClick3++
-
+            if (!viewModel.itemClick3) {
+                onCourtClick(3, viewModel.itemClick3)
+                viewModel.itemClick3 = true
+            } else {
+                onCourtClick(3, viewModel.itemClick3)
+                viewModel.itemClick3 = false
+            }
        }
         binding.imCourt4.setOnClickListener {
-            onCourtClick(4, itemClick4)
-            itemClick4++
+            if (!viewModel.itemClick4) {
+                onCourtClick(4, viewModel.itemClick4)
+                viewModel.itemClick4 = true
+            } else {
+                onCourtClick(4, viewModel.itemClick4)
+                viewModel.itemClick4 = false
+            }
 
        }
 
 
         binding.buttonBook.setOnClickListener {
-            //TODO register slot into database and log out user
+//            if(viewModel.itemClick1) {
+//                viewModel.pickedCourt.add(1)
+//            }
+//            if(viewModel.itemClick2) {
+//                viewModel.pickedCourt.add(2)
+//            }
+//            if(viewModel.itemClick3) {
+//                viewModel.pickedCourt.add(3)
+//            }
+//            if(viewModel.itemClick4) {
+//                viewModel.pickedCourt.add(4)
+//            }
+
+            Log.d(TAG, "buttonBook pressed: saved courtnumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
+            findNavController().navigate(CourtFragmentDirections.actionCourtFragmentToSummaryFragment())
 
         }
 
@@ -79,27 +106,78 @@ class CourtFragment : Fragment(){
         return binding.root
     }
 
+    init {
 
-    private fun onCourtClick (courtNo: Int, itemClick: Int) {
+    }
+
+
+    private fun onCourtClick (courtNo: Int, itemClick: Boolean) {
         Log.d(TAG, "Time slot is: ${viewModel.pickedTimeSlot}")
-        if (itemClick%2 == 0) {
+        if (!itemClick) {
+            viewModel.anyCourtClicked += courtNo
             when(courtNo) {
-                1 -> binding.imCourt1.setImageResource(R.drawable.court1_blue)
+                1 ->  {
+                    binding.imCourt1.setImageResource(R.drawable.court1_blue)
+                    viewModel.pickedCourt.add(courtNo)
+                }
+                2 -> {
+                    binding.imCourt2.setImageResource(R.drawable.court2_blue)
+                    viewModel.pickedCourt.add(courtNo)
+                }
+                3 -> {
+                    binding.imCourt3.setImageResource(R.drawable.court3_blue)
+                    viewModel.pickedCourt.add(courtNo)
+                }
+                4 -> {
+                    binding.imCourt4.setImageResource(R.drawable.court4_blue)
+                    viewModel.pickedCourt.add(courtNo)
+                }
+            }
+
+        } else {
+            viewModel.anyCourtClicked -= courtNo
+            when(courtNo) {
+                1 ->  {
+                    binding.imCourt1.setImageResource(R.drawable.court1)
+                    viewModel.pickedCourt.remove(courtNo)
+                }
+                2 -> {
+                    binding.imCourt2.setImageResource(R.drawable.court2)
+                    viewModel.pickedCourt.remove(2)
+                }
+                3 -> {
+                    binding.imCourt3.setImageResource(R.drawable.court3)
+                    viewModel.pickedCourt.remove(3)
+                }
+                4 -> {
+                    binding.imCourt4.setImageResource(R.drawable.court4)
+                    viewModel.pickedCourt.remove(4)
+                }
+            }
+        }
+        Log.d(TAG, "onCourtClick ended: picked times are: ${viewModel.pickedCourt}, courtNo is ${viewModel.anyCourtClicked}")
+
+        if (viewModel.anyCourtClicked > 0) {
+            binding.buttonBook.isEnabled = true
+        } else binding.buttonBook.isEnabled = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        for(i in viewModel.pickedCourt.indices) {
+            when(viewModel.pickedCourt[i]) {
+                1 -> {
+                    binding.imCourt1.setImageResource(R.drawable.court1_blue)
+                }
                 2 -> binding.imCourt2.setImageResource(R.drawable.court2_blue)
                 3 -> binding.imCourt3.setImageResource(R.drawable.court3_blue)
                 4 -> binding.imCourt4.setImageResource(R.drawable.court4_blue)
             }
-
-        } else {
-            when(courtNo) {
-                1 -> binding.imCourt1.setImageResource(R.drawable.court1)
-                2 -> binding.imCourt2.setImageResource(R.drawable.court2)
-                3 -> binding.imCourt3.setImageResource(R.drawable.court3)
-                4 -> binding.imCourt4.setImageResource(R.drawable.court4)
-            }
-
         }
-
+        if(viewModel.anyCourtClicked > 0) {
+            binding.buttonBook.isEnabled = true
+        }
+        Log.d(TAG, "onResume ended, courtNumbers are ${viewModel.pickedCourt}, itemclicks are: ${viewModel.itemClick1}, ${viewModel.itemClick2}, ${viewModel.itemClick3} and ${viewModel.itemClick4}, \n" +
+                " anyCourtClicked is: ${viewModel.anyCourtClicked}")
     }
-
 }

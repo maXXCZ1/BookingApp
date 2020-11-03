@@ -55,5 +55,18 @@
         android:id="@+id/courtFragment"
         android:name="opkp.solutions.bookingapp.court.CourtFragment"
         android:label="fragment_court"
-        tools:layout="@layout/fragment_court" />
+        tools:layout="@layout/fragment_court" >
+        <action
+            android:id="@+id/action_courtFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="opkp.solutions.bookingapp.summary.SummaryFragment"
+        android:label="fragment_summary"
+        tools:layout="@layout/fragment_summary" >
+        <action
+            android:id="@+id/action_summaryFragment_to_calendarFragment"
+            app:destination="@id/calendarFragment" />
+    </fragment>
 </navigation>

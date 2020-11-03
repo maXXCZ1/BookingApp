@@ -72,7 +72,8 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
         binding.buttonNext.isEnabled = itemClick != 0
 
         binding.buttonNext.setOnClickListener {
-                findNavController().navigate(TimeFragmentDirections.actionTimeFragmentToCourtFragment())
+            Log.d(TAG,"next button clicked: Picked date is ${viewModel.pickedDate}, picked timeslot is ${viewModel.pickedTimeSlot}")
+            findNavController().navigate(TimeFragmentDirections.actionTimeFragmentToCourtFragment())
             }
 
         return binding.root
@@ -92,7 +93,6 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
                     item.layoutBG = R.drawable.customborder_red
                     viewModel.pickedTimeSlot = (viewModel.itemList[position].time)
                     itemClick = 1
-//                    if (viewModel.pickedTimeSlot != "")
                     binding.buttonNext.isEnabled = true
 
                 } else {

@@ -26,6 +26,8 @@
     <string name="im_court2_contentdesc">Image of squash court number 2</string>
     <string name="im_court3_contentdesc">Image of squash court number 3</string>
     <string name="im_court4_contentdesc">Image of squash court number 4</string>
+    <string name="summary_text">Summary</string>
+    <string name="button_new_reservation">Make another reservation</string>
 
     <string-array name="stepview_entries">
         <item>Day</item>

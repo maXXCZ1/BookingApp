@@ -23,6 +23,12 @@ class SharedViewModel : ViewModel() {
     var pickedCourt = mutableListOf<Int>()
     var linearLayout = false
 
+    var itemClick1 = false
+    var itemClick2 = false
+    var itemClick3 = false
+    var itemClick4 = false
+    var anyCourtClicked = 0
+
     val finalDate = MutableLiveData<String>()
 
 
@@ -91,7 +97,6 @@ class SharedViewModel : ViewModel() {
 
         if (pickedDate == currentDateFormatted) {
             linearLayout = true
-            //TODO this if+if/else+else might be above pickedDate=currentForamtted
             if (currentHour <= 6) {
                 startHour = 7
             } else {
