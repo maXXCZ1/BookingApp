@@ -3,6 +3,7 @@ package opkp.solutions.bookingapp.time
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,31 +83,39 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
     override fun onItemClick(position: Int) {
 
         val item = viewModel.itemList[position]
-        Log.d(TAG, "pickedTimeSlot is ${viewModel.pickedTimeSlot}, position is $position")
+        Log.d(TAG, "pickedTimeSlot is ${viewModel.pickedTimeSlot}, position is $position, first item status is ${viewModel.itemList[0].status}")
 
                 if (item.status == "Unavailable") {
-                    binding.timeitemRecyclerview.isEnabled = false
-                }
-
-                if (item.status != "Chosen" && itemClick == 0) {
-                    item.status = "Chosen"
-                    item.layoutBG = R.drawable.customborder_red
-                    viewModel.pickedTimeSlot = (viewModel.itemList[position].time)
-                    itemClick = 1
-                    binding.buttonNext.isEnabled = true
+                    item.layoutBG = R.drawable.customborder
+                    Toast.makeText(requireContext(), "Choose another date please.", Toast.LENGTH_SHORT).also {
+                        it.setGravity(Gravity.CENTER_HORIZONTAL,0,0)
+                        it.show()
+                    }
 
                 } else {
-                    Log.d(TAG, "$itemClick is itemClick")
 
-                    if (item.status == "Chosen" && itemClick == 1) {
-                        itemClick = 0
-                        item.status = "Not booked"
-                        viewModel.pickedTimeSlot = ""
-                        item.layoutBG = R.drawable.customborder
-                        binding.buttonNext.isEnabled = false
+                    if (item.status != "Chosen" && item.status != "Unavailable" && itemClick == 0) {
+                        item.status = "Chosen"
+                        item.layoutBG = R.drawable.customborder_red
+                        viewModel.pickedTimeSlot = (viewModel.itemList[position].time)
+                        itemClick = 1
+                        binding.buttonNext.isEnabled = true
 
-                    } else Toast.makeText(requireContext(), "You can pick only one time slot.", Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, "$itemClick is itemClick")
+                    } else {
+                        Log.d(TAG, "$itemClick is itemClick")
+
+                        if (item.status == "Chosen" && itemClick == 1) {
+                            itemClick = 0
+                            item.status = "Not booked"
+                            viewModel.pickedTimeSlot = ""
+                            item.layoutBG = R.drawable.customborder
+                            binding.buttonNext.isEnabled = false
+
+                        } else Toast.makeText(requireContext(),
+                            "You can pick only one time slot.",
+                            Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, "$itemClick is itemClick")
+                    }
                 }
 
         Log.d(TAG, "Time slot is: ${viewModel.pickedTimeSlot} status of clicked item is ${viewModel.itemList[position].status}, itemClick is $itemClick")

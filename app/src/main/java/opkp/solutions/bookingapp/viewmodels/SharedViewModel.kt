@@ -6,7 +6,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import opkp.solutions.bookingapp.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import opkp.solutions.bookingapp.*
 import opkp.solutions.bookingapp.time.TimeData
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,6 +18,8 @@ private const val TAG = "ShareViewModel"
 
 class SharedViewModel : ViewModel() {
 
+    private var auth = FirebaseAuth.getInstance()
+
     private lateinit var currentDateFormatted: String
     var itemList = listOf<TimeData>()
     var pickedDate = ""
@@ -23,18 +27,24 @@ class SharedViewModel : ViewModel() {
     var pickedCourt = mutableListOf<Int>()
     var linearLayout = false
 
+    var currentUserID: String? = ""
+
     var itemClick1 = false
     var itemClick2 = false
     var itemClick3 = false
     var itemClick4 = false
     var anyCourtClicked = 0
 
-    val finalDate = MutableLiveData<String>()
+    var finalDate = MutableLiveData<String>()
 
 
     private var _invalidDate = MutableLiveData<Boolean>()
     val invalidDate: LiveData<Boolean>
         get() = _invalidDate
+
+    private var _loadingState = MutableLiveData<DataState>()
+    val loadingState: LiveData<DataState>
+        get() = _loadingState
 
 
     private fun setCurrentDateFormatted(): String {
@@ -137,5 +147,41 @@ class SharedViewModel : ViewModel() {
         )
 
         return itemList
+    }
+
+    fun getUserID() = auth.currentUser?.uid
+
+    fun writeNewUser(database: FirebaseDatabase) {
+        val user = BookedData(pickedDate, pickedTimeSlot, pickedCourt.sorted())
+        _loadingState.value = LoadingState()
+
+
+//        Log.d(TAG,"Write new user called:")
+        currentUserID?.let { it ->
+            database.reference.child("users").child(it).setValue(user).addOnCompleteListener {
+                _loadingState.value = CompletedState()
+            }
+                .addOnFailureListener {
+                    _loadingState.value = ErrorState(it)
+                }
+        }
+
+
+    }
+
+    fun initializeSharedViewModel() {
+        itemList = emptyList()
+        pickedDate = ""
+        pickedTimeSlot = ""
+        pickedCourt = mutableListOf<Int>()
+        linearLayout = false
+        _loadingState.value = null
+
+        itemClick1 = false
+        itemClick2 = false
+        itemClick3 = false
+        itemClick4 = false
+        anyCourtClicked = 0
+
     }
 }

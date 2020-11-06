@@ -58,25 +58,25 @@
             android:layout_marginBottom="8dp"
             android:text="Court number(s)"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/btn_new"
+            app:layout_constraintBottom_toTopOf="@+id/btn_new_reservation"
             app:layout_constraintEnd_toEndOf="@+id/tv_summary"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/tv_summary"
             app:layout_constraintTop_toBottomOf="@+id/tv_summarytimeslot" />
 
         <Button
-            android:id="@+id/btn_new"
+            android:id="@+id/btn_new_reservation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="@string/button_new_reservation"
-            app:layout_constraintBottom_toTopOf="@+id/button2"
+            app:layout_constraintBottom_toTopOf="@+id/btn_summary_logout"
             app:layout_constraintEnd_toEndOf="@+id/tv_summary"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/tv_summary" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_summary_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

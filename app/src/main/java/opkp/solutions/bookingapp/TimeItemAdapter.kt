@@ -12,8 +12,6 @@ import opkp.solutions.bookingapp.time.TimeData
 
 private const val TAG = "TimeItemAdapter"
 
-//TODO maybe need to add image into TimeData class and modify TimeViewHolder and onBindViewHolder accordingly
-
 class TimeItemAdapter(
     private val timeItemDataList: List<TimeData>,
     private val listener: OnItemClickListener
@@ -24,6 +22,7 @@ class TimeItemAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeItemViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.recyclerview_time_item, parent, false)
+
 
         return TimeItemViewHolder(itemView)
     }

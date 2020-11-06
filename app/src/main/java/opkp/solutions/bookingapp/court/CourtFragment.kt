@@ -2,54 +2,83 @@ package opkp.solutions.bookingapp.court
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.FirebaseDatabase
+import opkp.solutions.bookingapp.CompletedState
+import opkp.solutions.bookingapp.ErrorState
+import opkp.solutions.bookingapp.LoadingState
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentCourtBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 
 private const val TAG = "CourtFragment"
+
 /**
  * A simple [Fragment] subclass.
  * Use the [CourtFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CourtFragment : Fragment(){
+class CourtFragment : Fragment() {
 
     private lateinit var binding: FragmentCourtBinding
     private lateinit var viewModel: SharedViewModel
-
-
+    private lateinit var database: FirebaseDatabase
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate<FragmentCourtBinding>(inflater, R.layout.fragment_court, container, false)
+        binding = DataBindingUtil.inflate<FragmentCourtBinding>(inflater,
+            R.layout.fragment_court,
+            container,
+            false)
+
+        database = FirebaseDatabase.getInstance()
 
 
+        viewModel.loadingState.observe(viewLifecycleOwner, { dataState ->
+            when (dataState) {
+                is LoadingState -> {
+                    binding.clProgressbar.visibility = View.VISIBLE
+                    binding.buttonBook.isEnabled = false
+                    binding.buttonPrevious2.isEnabled = false
+                }
+                is ErrorState -> {
+                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                    binding.clProgressbar.visibility = View.GONE
+                    binding.buttonBook.isEnabled = true
+                    binding.buttonPrevious2.isEnabled = true
+                }
+                is CompletedState -> {
+                    findNavController().navigate(CourtFragmentDirections.actionCourtFragmentToSummaryFragment())
+                }
+            }
+        })
 
-       binding.imCourt1.setOnClickListener {
-           if (!viewModel.itemClick1) {
-               onCourtClick(1, viewModel.itemClick1)
-               viewModel.itemClick1 = true
-           } else {
-               onCourtClick(1, viewModel.itemClick1)
-               viewModel.itemClick1 = false
-           }
-       }
+        binding.imCourt1.setOnClickListener {
+            if (!viewModel.itemClick1) {
+                onCourtClick(1, viewModel.itemClick1)
+                viewModel.itemClick1 = true
+            } else {
+                onCourtClick(1, viewModel.itemClick1)
+                viewModel.itemClick1 = false
+            }
+        }
         binding.imCourt2.setOnClickListener {
             if (!viewModel.itemClick2) {
                 onCourtClick(2, viewModel.itemClick2)
@@ -58,7 +87,7 @@ class CourtFragment : Fragment(){
                 onCourtClick(2, viewModel.itemClick2)
                 viewModel.itemClick2 = false
             }
-       }
+        }
         binding.imCourt3.setOnClickListener {
             if (!viewModel.itemClick3) {
                 onCourtClick(3, viewModel.itemClick3)
@@ -81,21 +110,10 @@ class CourtFragment : Fragment(){
 
 
         binding.buttonBook.setOnClickListener {
-//            if(viewModel.itemClick1) {
-//                viewModel.pickedCourt.add(1)
-//            }
-//            if(viewModel.itemClick2) {
-//                viewModel.pickedCourt.add(2)
-//            }
-//            if(viewModel.itemClick3) {
-//                viewModel.pickedCourt.add(3)
-//            }
-//            if(viewModel.itemClick4) {
-//                viewModel.pickedCourt.add(4)
-//            }
+            viewModel.writeNewUser(database)
 
-            Log.d(TAG, "buttonBook pressed: saved courtnumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
-            findNavController().navigate(CourtFragmentDirections.actionCourtFragmentToSummaryFragment())
+            Log.d(TAG,
+                "buttonBook pressed: saved courtNumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
 
         }
 
@@ -103,11 +121,9 @@ class CourtFragment : Fragment(){
             findNavController().popBackStack()
         }
 
+        //TODO disable back button
+
         return binding.root
-    }
-
-    init {
-
     }
 
 
@@ -143,15 +159,15 @@ class CourtFragment : Fragment(){
                 }
                 2 -> {
                     binding.imCourt2.setImageResource(R.drawable.court2)
-                    viewModel.pickedCourt.remove(2)
+                    viewModel.pickedCourt.remove(courtNo)
                 }
                 3 -> {
                     binding.imCourt3.setImageResource(R.drawable.court3)
-                    viewModel.pickedCourt.remove(3)
+                    viewModel.pickedCourt.remove(courtNo)
                 }
                 4 -> {
                     binding.imCourt4.setImageResource(R.drawable.court4)
-                    viewModel.pickedCourt.remove(4)
+                    viewModel.pickedCourt.remove(courtNo)
                 }
             }
         }

@@ -86,7 +86,7 @@ class CreateAccountFragment : Fragment() {
         } else {
             binding.createEmailLayout.error = null
             binding.createEmailLayout.helperText = "Correct input"
-
+        }
         if (password.isEmpty()) {
             binding.createPasswordLayout.error = "Password must not be empty!"
         } else if (password.isNotEmpty() && password.length < 6) {
@@ -97,7 +97,7 @@ class CreateAccountFragment : Fragment() {
             binding.createPasswordLayout.helperText = "Correct input"
             createUser(email, password)
         }
-        }
+
 
     }
 

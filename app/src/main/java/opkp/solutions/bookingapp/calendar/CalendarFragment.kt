@@ -34,11 +34,13 @@ class CalendarFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
 
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser!!
 
-        viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        viewModel.currentUserID = viewModel.getUserID()
+
     }
 
     override fun onCreateView(
@@ -56,7 +58,7 @@ class CalendarFragment : Fragment() {
 
         binding.buttonLogout.setOnClickListener{
 
-            FirebaseAuth.getInstance().signOut()
+            auth.signOut()
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToLoginFragment())
         }
 
@@ -69,7 +71,7 @@ class CalendarFragment : Fragment() {
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTimeFragment())
         }
 
-        Log.d(TAG, "onCreateView ended: Picked date is ${viewModel.pickedDate}")
+        Log.d(TAG, "onCreateView ended: Picked date is ${viewModel.pickedDate}, time is: ${viewModel.pickedTimeSlot}, court(s) are: ${viewModel.pickedCourt}, uid is ${viewModel.getUserID()}")
         return binding.root
     }
 

@@ -29,7 +29,6 @@ private const val TAG = "LoginFragment"
 class LoginFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var viewModel: LoginViewModel
     private lateinit var binding: FragmentLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +49,6 @@ class LoginFragment : Fragment() {
             false
         )
 
-        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         binding.emailEditext.requestFocus()
 
@@ -80,7 +78,7 @@ class LoginFragment : Fragment() {
         } else {
             binding.emailEditext.error = null
             binding.emailEditext.helperText = "Correct input"
-
+        }
         if (password.isEmpty()) {
             binding.passwordEditttext.error = "Password must not be empty!"
         } else if (password.isNotEmpty() && password.length < 6) {
@@ -91,7 +89,7 @@ class LoginFragment : Fragment() {
             binding.passwordEditttext.helperText = "Correct input"
             loginUser(email, password)
         }
-        }
+
 
     }
 
@@ -125,7 +123,7 @@ class LoginFragment : Fragment() {
                     when (exception.errorCode) {
                         "ERROR_USER_NOT_FOUND" ->
                           Toast.makeText(
-                            activity, "Invalid email, please try again.",
+                            activity, "Invalid email, please try again \nor create new account.",
                             Toast.LENGTH_LONG
                         ).show()
 
@@ -181,9 +179,10 @@ class LoginFragment : Fragment() {
 
         val currentUser = auth.currentUser
 
-        if (currentUser != null) {
+        if (currentUser != null && auth.currentUser!!.isEmailVerified) {
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCalendarFragment())
         }
+
     }
 
 }
