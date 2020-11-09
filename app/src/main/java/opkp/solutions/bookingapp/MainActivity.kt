@@ -31,7 +31,13 @@ class MainActivity : AppCompatActivity() {
 
 
         if(currentFragment != null && currentFragment == R.id.calendarFragment) {
-            finishAffinity()
+            Toast.makeText(applicationContext,
+                "Button disabled.\nUse buttons provided by application.",
+                Toast.LENGTH_SHORT)
+                .also {
+                    it.setGravity(Gravity.CENTER, 0, 0)
+                    it.show()
+                }
         }
 
         if(currentFragment != null && currentFragment == R.id.summaryFragment) {

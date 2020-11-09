@@ -21,6 +21,7 @@ import opkp.solutions.bookingapp.databinding.FragmentLoginBinding
 
 
 private const val TAG = "LoginFragment"
+
 /**
  * A simple [Fragment] subclass.
  * Use the [LoginFragment.newInstance] factory method to
@@ -38,7 +39,7 @@ class LoginFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_login, container, false)
@@ -60,7 +61,7 @@ class LoginFragment : Fragment() {
             inputCheck(email, password)
         }
 
-        binding.createAccountButton.setOnClickListener{
+        binding.createAccountButton.setOnClickListener {
 
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCreateAccountFragment())
         }
@@ -69,7 +70,7 @@ class LoginFragment : Fragment() {
 
 
     private fun inputCheck(email: String, password: String) {
-        Log.d(TAG,"inputCheck started: email is $email + password is $password")
+        Log.d(TAG, "inputCheck started: email is $email + password is $password")
 
         if (email.isEmpty()) {
             binding.emailEditext.error = "Email must not be empty!"
@@ -122,31 +123,32 @@ class LoginFragment : Fragment() {
 
                     when (exception.errorCode) {
                         "ERROR_USER_NOT_FOUND" ->
-                          Toast.makeText(
-                            activity, "Invalid email, please try again \nor create new account.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                            Toast.makeText(
+                                activity,
+                                "Invalid email, please try again \nor create new account.",
+                                Toast.LENGTH_LONG
+                            ).show()
 
                         "ERROR_WRONG_PASSWORD" ->
-                        Toast.makeText(
-                            activity, "Invalid password, please try again.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                            Toast.makeText(
+                                activity, "Invalid password, please try again.",
+                                Toast.LENGTH_LONG
+                            ).show()
 
                         "ERROR_EMAIL_ALREADY_IN_USE" ->
                             Toast.makeText(
                                 activity, "Email address is already in use.",
                                 Toast.LENGTH_LONG
                             ).show()
-                        else  -> {
+                        else -> {
                             Toast.makeText(
                                 activity, "Login failed: ${exception.message}.",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
                     }
-                    }
                 }
+            }
 
     }
 
@@ -159,11 +161,11 @@ class LoginFragment : Fragment() {
                 activity, "Login successful, welcome.",
                 Toast.LENGTH_SHORT
             ).also {
-                it.setGravity(Gravity.CENTER_HORIZONTAL,0,0)
+                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
                 it.show()
             }
 
-        }else {
+        } else {
             Toast.makeText(
                 activity, "Login Failed, please try again",
                 Toast.LENGTH_SHORT

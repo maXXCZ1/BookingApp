@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.database.FirebaseDatabase
 import opkp.solutions.bookingapp.CompletedState
 import opkp.solutions.bookingapp.ErrorState
 import opkp.solutions.bookingapp.LoadingState
@@ -29,7 +28,6 @@ class CourtFragment : Fragment() {
 
     private lateinit var binding: FragmentCourtBinding
     private lateinit var viewModel: SharedViewModel
-    private lateinit var database: FirebaseDatabase
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,12 +41,12 @@ class CourtFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate<FragmentCourtBinding>(inflater,
+        binding = DataBindingUtil.inflate(inflater,
             R.layout.fragment_court,
             container,
             false)
 
-        database = FirebaseDatabase.getInstance()
+
 
 
         viewModel.loadingState.observe(viewLifecycleOwner, { dataState ->
@@ -96,7 +94,7 @@ class CourtFragment : Fragment() {
                 onCourtClick(3, viewModel.itemClick3)
                 viewModel.itemClick3 = false
             }
-       }
+        }
         binding.imCourt4.setOnClickListener {
             if (!viewModel.itemClick4) {
                 onCourtClick(4, viewModel.itemClick4)
@@ -106,11 +104,11 @@ class CourtFragment : Fragment() {
                 viewModel.itemClick4 = false
             }
 
-       }
+        }
 
 
         binding.buttonBook.setOnClickListener {
-            viewModel.writeNewUser(database)
+            viewModel.writeNewUser()
 
             Log.d(TAG,
                 "buttonBook pressed: saved courtNumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
@@ -127,12 +125,12 @@ class CourtFragment : Fragment() {
     }
 
 
-    private fun onCourtClick (courtNo: Int, itemClick: Boolean) {
+    private fun onCourtClick(courtNo: Int, itemClick: Boolean) {
         Log.d(TAG, "Time slot is: ${viewModel.pickedTimeSlot}")
         if (!itemClick) {
             viewModel.anyCourtClicked += courtNo
-            when(courtNo) {
-                1 ->  {
+            when (courtNo) {
+                1 -> {
                     binding.imCourt1.setImageResource(R.drawable.court1_blue)
                     viewModel.pickedCourt.add(courtNo)
                 }
@@ -152,8 +150,8 @@ class CourtFragment : Fragment() {
 
         } else {
             viewModel.anyCourtClicked -= courtNo
-            when(courtNo) {
-                1 ->  {
+            when (courtNo) {
+                1 -> {
                     binding.imCourt1.setImageResource(R.drawable.court1)
                     viewModel.pickedCourt.remove(courtNo)
                 }
@@ -171,17 +169,16 @@ class CourtFragment : Fragment() {
                 }
             }
         }
-        Log.d(TAG, "onCourtClick ended: picked times are: ${viewModel.pickedCourt}, courtNo is ${viewModel.anyCourtClicked}")
+        Log.d(TAG,
+            "onCourtClick ended: picked times are: ${viewModel.pickedCourt}, courtNo is ${viewModel.anyCourtClicked}")
 
-        if (viewModel.anyCourtClicked > 0) {
-            binding.buttonBook.isEnabled = true
-        } else binding.buttonBook.isEnabled = false
+        binding.buttonBook.isEnabled = viewModel.anyCourtClicked > 0
     }
 
     override fun onResume() {
         super.onResume()
-        for(i in viewModel.pickedCourt.indices) {
-            when(viewModel.pickedCourt[i]) {
+        for (i in viewModel.pickedCourt.indices) {
+            when (viewModel.pickedCourt[i]) {
                 1 -> {
                     binding.imCourt1.setImageResource(R.drawable.court1_blue)
                 }
@@ -190,10 +187,11 @@ class CourtFragment : Fragment() {
                 4 -> binding.imCourt4.setImageResource(R.drawable.court4_blue)
             }
         }
-        if(viewModel.anyCourtClicked > 0) {
+        if (viewModel.anyCourtClicked > 0) {
             binding.buttonBook.isEnabled = true
         }
-        Log.d(TAG, "onResume ended, courtNumbers are ${viewModel.pickedCourt}, itemclicks are: ${viewModel.itemClick1}, ${viewModel.itemClick2}, ${viewModel.itemClick3} and ${viewModel.itemClick4}, \n" +
-                " anyCourtClicked is: ${viewModel.anyCourtClicked}")
+        Log.d(TAG,
+            "onResume ended, courtNumbers are ${viewModel.pickedCourt}, itemclicks are: ${viewModel.itemClick1}, ${viewModel.itemClick2}, ${viewModel.itemClick3} and ${viewModel.itemClick4}, \n" +
+                    " anyCourtClicked is: ${viewModel.anyCourtClicked}")
     }
 }

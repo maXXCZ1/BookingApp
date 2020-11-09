@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import opkp.solutions.bookingapp.*
 import opkp.solutions.bookingapp.time.TimeData
@@ -18,7 +19,11 @@ private const val TAG = "ShareViewModel"
 
 class SharedViewModel : ViewModel() {
 
-    private var auth = FirebaseAuth.getInstance()
+    private lateinit var auth: FirebaseAuth
+
+    //TODO assign reference to var database
+    private lateinit var database: DatabaseReference
+
 
     private lateinit var currentDateFormatted: String
     var itemList = listOf<TimeData>()
@@ -149,16 +154,21 @@ class SharedViewModel : ViewModel() {
         return itemList
     }
 
-    fun getUserID() = auth.currentUser?.uid
 
-    fun writeNewUser(database: FirebaseDatabase) {
+    fun getUserID(): String {
+        auth = FirebaseAuth.getInstance()
+        return auth.currentUser?.uid ?: throw NullPointerException("Expression 'uid' must not be null")
+    }
+
+    fun writeNewUser() {
+        database = FirebaseDatabase.getInstance().getReference("users")
+        val bookingID = database.push().key!!
         val user = BookedData(pickedDate, pickedTimeSlot, pickedCourt.sorted())
         _loadingState.value = LoadingState()
 
 
-//        Log.d(TAG,"Write new user called:")
         currentUserID?.let { it ->
-            database.reference.child("users").child(it).setValue(user).addOnCompleteListener {
+            database.child(it).child(bookingID).setValue(user).addOnCompleteListener {
                 _loadingState.value = CompletedState()
             }
                 .addOnFailureListener {

@@ -71,5 +71,13 @@
         <action
             android:id="@+id/action_summaryFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_summaryFragment_to_manageReservationsFragment"
+            app:destination="@id/manageReservationsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/manageReservationsFragment"
+        android:name="opkp.solutions.bookingapp.managereservations.ManageReservationsFragment"
+        android:label="fragment_manage_reservations"
+        tools:layout="@layout/fragment_manage_reservations" />
 </navigation>

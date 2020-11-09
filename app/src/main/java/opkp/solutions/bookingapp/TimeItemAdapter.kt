@@ -14,7 +14,7 @@ private const val TAG = "TimeItemAdapter"
 
 class TimeItemAdapter(
     private val timeItemDataList: List<TimeData>,
-    private val listener: OnItemClickListener
+    private val listener: OnItemClickListener,
 ) :
     RecyclerView.Adapter<TimeItemAdapter.TimeItemViewHolder>() {
 
