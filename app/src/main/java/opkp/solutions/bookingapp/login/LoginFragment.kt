@@ -1,6 +1,5 @@
 package opkp.solutions.bookingapp.login
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -55,7 +53,7 @@ class LoginFragment : Fragment() {
 
 
         binding.loginButton.setOnClickListener {
-            //TODO validate database account and navigate to CalendarFragment
+
             val email = binding.textInput2.text.toString()
             val password = binding.textInput1.text.toString()
             inputCheck(email, password)

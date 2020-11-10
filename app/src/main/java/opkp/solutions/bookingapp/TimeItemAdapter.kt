@@ -1,6 +1,10 @@
 package opkp.solutions.bookingapp
 
 
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.text.format.Time
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,24 +27,36 @@ class TimeItemAdapter(
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.recyclerview_time_item, parent, false)
 
-
         return TimeItemViewHolder(itemView)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: TimeItemViewHolder, position: Int) {
         val currentItem = timeItemDataList[position]
 
-        holder.layout.setBackgroundResource(currentItem.layoutBG)
-        holder.imageView.setImageResource(currentItem.image)
-        holder.timeFrame.text = currentItem.time
-        holder.status.text = currentItem.status
+        Log.d(TAG, "timeframe on position $position is ${timeItemDataList[position].time}")
+
+        //TODO compare timeFrames with booked database for chosen day....
+        if (timeItemDataList[position].time == "14:00 - 15:00") {
+            holder.itemView.isEnabled = false
+            holder.layout.setBackgroundResource(R.drawable.customborder_orange)
+            holder.imageView.setImageResource(currentItem.image)
+            holder.timeFrame.text = currentItem.time
+            //TODO remove hardcoded text
+            holder.status.text = "Booked"
+        } else {
+
+            holder.layout.setBackgroundResource(currentItem.layoutBG)
+            holder.imageView.setImageResource(currentItem.image)
+            holder.timeFrame.text = currentItem.time
+            holder.status.text = currentItem.status
+        }
     }
 
     override fun getItemCount() = timeItemDataList.size
 
     inner class TimeItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-
 
         val layout: ConstraintLayout = itemView.rv_item_layout!!
         val imageView = itemView.im_clock!!

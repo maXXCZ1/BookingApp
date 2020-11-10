@@ -20,12 +20,9 @@ private const val TAG = "ShareViewModel"
 class SharedViewModel : ViewModel() {
 
     private lateinit var auth: FirebaseAuth
-
-    //TODO assign reference to var database
     private lateinit var database: DatabaseReference
+        private lateinit var currentDateFormatted: String
 
-
-    private lateinit var currentDateFormatted: String
     var itemList = listOf<TimeData>()
     var pickedDate = ""
     var pickedTimeSlot: String = ""
@@ -194,4 +191,5 @@ class SharedViewModel : ViewModel() {
         anyCourtClicked = 0
 
     }
+
 }

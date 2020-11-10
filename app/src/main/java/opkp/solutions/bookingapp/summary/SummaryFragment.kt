@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -70,11 +69,11 @@ class SummaryFragment : Fragment() {
             findNavController().navigate(SummaryFragmentDirections.actionSummaryFragmentToLoginFragment())
         }
 
-        return binding.root
-    }
+        binding.btnManageReservations.setOnClickListener {
+            findNavController().navigate(SummaryFragmentDirections.actionSummaryFragmentToManageReservationsFragment())
+        }
 
-    fun onBackPressed() {
-        Toast.makeText(requireContext(), "Back button disabled", Toast.LENGTH_SHORT).show()
+        return binding.root
     }
 
 
