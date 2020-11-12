@@ -5,6 +5,7 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.util.Log
 import android.util.Patterns
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -113,7 +114,10 @@ class CreateAccountFragment : Fragment() {
                             updateUI(user)
                         } else {
                             Toast.makeText(activity, "Cannot send verification email.",
-                                Toast.LENGTH_SHORT).show()
+                                Toast.LENGTH_SHORT).also {
+                                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                                it.show()
+                            }
                         }
                     }
                 } else {
@@ -124,12 +128,16 @@ class CreateAccountFragment : Fragment() {
                     when(exception.errorCode) {
                         "ERROR_EMAIL_ALREADY_IN_USE" ->
                             Toast.makeText(activity, "Email already in use, try different please.",
-                            Toast.LENGTH_SHORT).show()
-
+                            Toast.LENGTH_SHORT).also {
+                                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                                it.show()
+                            }
                         "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" ->
                             Toast.makeText(activity, "Account already exists with same email but different sign-in credentials.",
-                                Toast.LENGTH_SHORT).show()
-
+                                Toast.LENGTH_SHORT).also {
+                                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                                it.show()
+                            }
                         else ->
                             Toast.makeText(activity, "${task.exception?.message} Try again please",
                                 Toast.LENGTH_SHORT).show()
@@ -145,12 +153,18 @@ class CreateAccountFragment : Fragment() {
             Toast.makeText(
                 activity, "Account successfully created, verify your email address",
                 Toast.LENGTH_SHORT
-            ).show()
+            ).also {
+                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                it.show()
+            }
         }else {
             Toast.makeText(
                 activity, "Account creation failed, please try again",
                 Toast.LENGTH_SHORT
-            ).show()
+            ).also {
+                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                it.show()
+            }
         }
 
     }

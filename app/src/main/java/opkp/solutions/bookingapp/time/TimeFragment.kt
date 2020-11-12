@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.TimeItemAdapter
 import opkp.solutions.bookingapp.databinding.FragmentTimeBinding
-import opkp.solutions.bookingapp.databinding.RecyclerviewTimeItemBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 
 
@@ -96,7 +95,7 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
 
                     if (item.status != "Chosen" && item.status != "Unavailable" && itemClick == 0) {
                         item.status = "Chosen"
-                        item.layoutBG = R.drawable.customborder_red
+                        item.layoutBG = R.drawable.customborder_blue
                         viewModel.pickedTimeSlot = (viewModel.itemList[position].time)
                         itemClick = 1
                         binding.buttonNext.isEnabled = true
@@ -113,7 +112,10 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
 
                         } else Toast.makeText(requireContext(),
                             "You can pick only one time slot.",
-                            Toast.LENGTH_SHORT).show()
+                            Toast.LENGTH_SHORT).also {
+                            it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                            it.show()
+                        }
                         Log.d(TAG, "$itemClick is itemClick")
                     }
                 }

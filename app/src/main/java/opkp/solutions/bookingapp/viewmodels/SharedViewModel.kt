@@ -1,27 +1,35 @@
 package opkp.solutions.bookingapp.viewmodels
 
-
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import opkp.solutions.bookingapp.*
 import opkp.solutions.bookingapp.time.TimeData
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 private const val TAG = "ShareViewModel"
 
+
 class SharedViewModel : ViewModel() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
-        private lateinit var currentDateFormatted: String
+    private lateinit var currentDateFormatted: String
 
     var itemList = listOf<TimeData>()
     var pickedDate = ""
@@ -47,6 +55,10 @@ class SharedViewModel : ViewModel() {
     private var _loadingState = MutableLiveData<DataState>()
     val loadingState: LiveData<DataState>
         get() = _loadingState
+
+    private val _connection = MutableLiveData<Boolean>()
+    val connection: LiveData<Boolean>
+        get() = _connection
 
 
     private fun setCurrentDateFormatted(): String {
@@ -190,6 +202,32 @@ class SharedViewModel : ViewModel() {
         itemClick4 = false
         anyCourtClicked = 0
 
+    }
+
+    fun checkInternetConnection() {
+        Log.d(TAG, "checkInternetConnection: started")
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val timeoutMs = 1500
+                    val socket = Socket()
+                    val socketAddress = InetSocketAddress("8.8.8.8", 53)
+
+                    socket.connect(socketAddress, timeoutMs)
+                    socket.close()
+
+                    withContext(Dispatchers.Main) {
+                        _connection.value = true
+                    }
+                }
+                catch(ex: IOException) {
+                    withContext(Main) {
+                        _connection.value = false
+                    }
+                }
+            }
+        }
+        Log.d(TAG, "checkInternetConnection: ended, connection is: ${_connection.value}")
     }
 
 }

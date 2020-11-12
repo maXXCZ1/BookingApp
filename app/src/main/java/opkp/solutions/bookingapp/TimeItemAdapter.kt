@@ -2,8 +2,6 @@ package opkp.solutions.bookingapp
 
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.text.format.Time
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +37,7 @@ class TimeItemAdapter(
         //TODO compare timeFrames with booked database for chosen day....
         if (timeItemDataList[position].time == "14:00 - 15:00") {
             holder.itemView.isEnabled = false
-            holder.layout.setBackgroundResource(R.drawable.customborder_orange)
+            holder.layout.setBackgroundResource(R.drawable.customborder_grey)
             holder.imageView.setImageResource(currentItem.image)
             holder.timeFrame.text = currentItem.time
             //TODO remove hardcoded text
