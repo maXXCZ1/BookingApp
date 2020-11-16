@@ -2,6 +2,7 @@ package opkp.solutions.bookingapp.court
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,8 +47,7 @@ class CourtFragment : Fragment() {
             container,
             false)
 
-
-
+        //TODO check if some of the courts are already booked in database and disable them for onclick + set grey background
 
         viewModel.loadingState.observe(viewLifecycleOwner, { dataState ->
             when (dataState) {
@@ -57,7 +57,10 @@ class CourtFragment : Fragment() {
                     binding.buttonPrevious2.isEnabled = false
                 }
                 is ErrorState -> {
-                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).also {
+                        it.setGravity(Gravity.CENTER, 0, 0)
+                        it.show()
+                    }
                     binding.clProgressbar.visibility = View.GONE
                     binding.buttonBook.isEnabled = true
                     binding.buttonPrevious2.isEnabled = true
@@ -119,11 +122,9 @@ class CourtFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        //TODO disable back button
 
         return binding.root
     }
-
 
     private fun onCourtClick(courtNo: Int, itemClick: Boolean) {
         Log.d(TAG, "Time slot is: ${viewModel.pickedTimeSlot}")

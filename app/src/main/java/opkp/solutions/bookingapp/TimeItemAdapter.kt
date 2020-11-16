@@ -2,6 +2,7 @@ package opkp.solutions.bookingapp
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,15 +12,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recyclerview_time_item.view.*
 import opkp.solutions.bookingapp.time.TimeData
+import opkp.solutions.bookingapp.viewmodels.SharedViewModel
+
 
 private const val TAG = "TimeItemAdapter"
 
 class TimeItemAdapter(
     private val timeItemDataList: List<TimeData>,
-    private val listener: OnItemClickListener,
+    private val listener: OnItemClickListener, val context: Context,
 ) :
     RecyclerView.Adapter<TimeItemAdapter.TimeItemViewHolder>() {
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeItemViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -40,8 +42,7 @@ class TimeItemAdapter(
             holder.layout.setBackgroundResource(R.drawable.customborder_grey)
             holder.imageView.setImageResource(currentItem.image)
             holder.timeFrame.text = currentItem.time
-            //TODO remove hardcoded text
-            holder.status.text = "Booked"
+            holder.status.text = context.getString(R.string.status_booked)
         } else {
 
             holder.layout.setBackgroundResource(currentItem.layoutBG)

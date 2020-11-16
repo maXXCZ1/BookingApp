@@ -60,6 +60,7 @@ class SummaryFragment : Fragment() {
 
 
         binding.btnNewReservation.setOnClickListener {
+
             findNavController().navigate(SummaryFragmentDirections.actionSummaryFragmentToCalendarFragment())
             viewModel.initializeSharedViewModel()
         }

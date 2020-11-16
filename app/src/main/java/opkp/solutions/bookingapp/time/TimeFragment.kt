@@ -53,7 +53,7 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
             false
         )
 
-        adapter = TimeItemAdapter(viewModel.itemList, this)
+        adapter = TimeItemAdapter(viewModel.itemList, this, requireContext())
 
         binding.timeitemRecyclerview.adapter = adapter
         if(viewModel.linearLayout) {
@@ -64,7 +64,6 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
         }
         binding.timeitemRecyclerview.setHasFixedSize(true)
 
-
         binding.buttonPrevious.setOnClickListener {
             findNavController().navigate(TimeFragmentDirections.actionTimeFragmentToCalendarFragment())
         }
@@ -72,6 +71,7 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
         binding.buttonNext.isEnabled = itemClick != 0
 
         binding.buttonNext.setOnClickListener {
+
             Log.d(TAG,"next button clicked: Picked date is ${viewModel.pickedDate}, picked timeslot is ${viewModel.pickedTimeSlot}")
             findNavController().navigate(TimeFragmentDirections.actionTimeFragmentToCourtFragment())
             }

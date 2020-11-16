@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<!--    TODO used FragmentContainerView instead of .Fragment, might roll back in case of problems-->
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navhost_fragment"

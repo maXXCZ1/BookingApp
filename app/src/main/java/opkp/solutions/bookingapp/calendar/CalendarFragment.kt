@@ -21,7 +21,7 @@ import opkp.solutions.bookingapp.viewmodels.SharedViewModel
  * create an instance of this fragment.
  */
 
-private const val  TAG = "CalendarFragment"
+private const val TAG = "CalendarFragment"
 
 class CalendarFragment : Fragment() {
 
@@ -39,24 +39,26 @@ class CalendarFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser!!
 
-        viewModel.currentUserID = viewModel.getUserID()
-
+//        viewModel.currentUserID = viewModel.getUserID()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate<FragmentCalendarBinding>(inflater, R.layout.fragment_calendar, container, false)
+        binding = DataBindingUtil.inflate<FragmentCalendarBinding>(inflater,
+            R.layout.fragment_calendar,
+            container,
+            false)
 
         binding.calendarview.setOnDateChangeListener { _, i, i2, i3 ->
-            date = "$i3/${i2+1}/$i"
+            date = "$i3/${i2 + 1}/$i"
             viewModel.checkDate(date)
-            Log.d(TAG, "date is $i3/${i2+1}/$i")
+            Log.d(TAG, "date is $i3/${i2 + 1}/$i")
         }
 
-        binding.buttonLogout.setOnClickListener{
+        binding.buttonLogout.setOnClickListener {
 
             auth.signOut()
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToLoginFragment())
@@ -66,14 +68,15 @@ class CalendarFragment : Fragment() {
             binding.buttonNext2.isEnabled = !isTrue
         })
 
-        binding.buttonNext2.setOnClickListener{
+        binding.buttonNext2.setOnClickListener {
             viewModel.pickDate(date)
+            viewModel.loadBookingsFromDB()
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTimeFragment())
         }
 
-        Log.d(TAG, "onCreateView ended: Picked date is ${viewModel.pickedDate}, time is: ${viewModel.pickedTimeSlot}, court(s) are: ${viewModel.pickedCourt}, uid is ${viewModel.getUserID()}")
+        Log.d(TAG,
+            "onCreateView ended: Picked date is ${viewModel.pickedDate}, time is: ${viewModel.pickedTimeSlot}, court(s) are: ${viewModel.pickedCourt}")
         return binding.root
     }
-
 
 }

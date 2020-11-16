@@ -19,8 +19,6 @@ import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentLoginBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 
-//TODO check if there is internet connection in
-
 private const val TAG = "LoginFragment"
 
 /**
@@ -33,7 +31,8 @@ class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var binding: FragmentLoginBinding
     private lateinit var viewModel: SharedViewModel
-
+    var email = ""
+    var password = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +53,7 @@ class LoginFragment : Fragment() {
             false
         )
         auth = FirebaseAuth.getInstance()
-        var email = ""
-        var password = ""
+
 
         binding.emailEditext.requestFocus()
 
@@ -80,184 +78,155 @@ class LoginFragment : Fragment() {
             }
         }
 
+        binding.createAccountButton.setOnClickListener {
 
-    binding.createAccountButton.setOnClickListener {
-
-        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCreateAccountFragment())
-    }
-    return binding.root
-}
-
-
-private fun inputCheck(email: String, password: String) {
-
-    Log.d(TAG, "inputCheck started: email is $email + password is $password")
-    if (email.isEmpty()) {
-        binding.emailEditext.error = "Email must not be empty!"
-    } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-        binding.emailEditext.error = "Invalid email format!"
-    } else {
-        binding.emailEditext.error = null
-        binding.emailEditext.helperText = "Correct input"
-    }
-    if (password.isEmpty()) {
-        binding.passwordEditttext.error = "Password must not be empty!"
-    } else if (password.isNotEmpty() && password.length < 6) {
-        binding.passwordEditttext.error = "Password has to contain at least 6 characters!"
-
-    } else {
-        binding.passwordEditttext.error = null
-        binding.passwordEditttext.helperText = "Correct input"
-        viewModel.checkInternetConnection()
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCreateAccountFragment())
+        }
+        return binding.root
     }
 
 
-}
+    private fun inputCheck(email: String, password: String) {
 
-//private fun observeInternetConnectionStatus(email: String, password: String) {
-//    Log.d(TAG, "observerInternetConnectionStatus: started")
-//    if (loginClick == 0) {
-//        viewModel.connection.observe(viewLifecycleOwner) { hasInternet ->
-//            Log.d(TAG,
-//                "hasInternet is observer is: ${
-//                    viewModel.connection.observe(viewLifecycleOwner,
-//                        {}).toString()
-//                }$hasInternet, email is $email, password is $password")
-//            if (!hasInternet) {
-//                Toast.makeText(context,
-//                    "No internet connection. Try again.",
-//                    Toast.LENGTH_SHORT).also {
-//                    it.setGravity(Gravity.CENTER, 0, 0)
-//                    it.show()
-//                }
-//
-//            } else {
-//                loginUser(email, password)
-//            }
-//        }
-//    }
-//}
+        Log.d(TAG, "inputCheck started: email is $email + password is $password")
+        if (email.isEmpty()) {
+            binding.emailEditext.error = "Email must not be empty!"
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.emailEditext.error = "Invalid email format!"
+        } else {
+            binding.emailEditext.error = null
+            binding.emailEditext.helperText = "Correct input"
+        }
+        if (password.isEmpty()) {
+            binding.passwordEditttext.error = "Password must not be empty!"
+        } else if (password.isNotEmpty() && password.length < 6) {
+            binding.passwordEditttext.error = "Password has to contain at least 6 characters!"
 
-private fun loginUser(email: String, password: String) {
+        } else {
+            binding.passwordEditttext.error = null
+            binding.passwordEditttext.helperText = "Correct input"
+            viewModel.checkInternetConnection()
+        }
 
-    Log.d(TAG, "loginUser started: email is $email, password is $password")
+    }
 
-    if(email.isNotEmpty() || password.isNotEmpty()) {
+    private fun loginUser(email: String, password: String) {
 
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(requireActivity()) { task ->
+        Log.d(TAG, "loginUser started: email is $email, password is $password")
 
-                if (task.isSuccessful) {
-                    if (auth.currentUser!!.isEmailVerified) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithEmail: success")
-                        val user = auth.currentUser//TODO
-                        updateUI(user)
-                    } else {
-                        Log.d(TAG, "signInWithEmail: fail, email not verified")
-                        Toast.makeText(
-                            activity, "Please verify your email address.",
-                            Toast.LENGTH_SHORT
-                        ).also {
-                            it.setGravity(Gravity.CENTER, 0, 0)
-                            it.show()
+        if (email.isNotEmpty() || password.isNotEmpty()) {
+
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity()) { task ->
+
+                    if (task.isSuccessful) {
+                        if (auth.currentUser!!.isEmailVerified) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail: success")
+                            val user = auth.currentUser
+                            updateUI(user)
+                        } else {
+                            Log.d(TAG, "signInWithEmail: fail, email not verified")
+                            Toast.makeText(
+                                activity, "Please verify your email address.",
+                                Toast.LENGTH_SHORT
+                            ).also {
+                                it.setGravity(Gravity.CENTER, 0, 0)
+                                it.show()
+                            }
                         }
-                    }
 
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Toast.makeText(requireContext(),
-                        "Sign in failed, please try again",
-                        Toast.LENGTH_SHORT).also {
-                        it.setGravity(Gravity.CENTER, 0, 0)
-                        it.show()
-                    }
-                    Log.d(TAG, "message")
+                    } else {
 
-                    val exception = task.exception as FirebaseAuthException
-                    Log.d(TAG, "error code is ${exception.errorCode}")
+                        Log.d(TAG, "message")
 
-                    when (exception.errorCode) {
-                        "ERROR_USER_NOT_FOUND" ->
-                            Toast.makeText(
-                                activity,
-                                "Invalid email, please try again \nor create new account.",
-                                Toast.LENGTH_LONG
-                            ).also {
-                                it.setGravity(Gravity.CENTER, 0, 0)
-                                it.show()
-                            }
+                        val exception = task.exception as FirebaseAuthException
+                        Log.d(TAG, "FirebaseAuth error code is ${exception.errorCode}")
 
-                        "ERROR_WRONG_PASSWORD" ->
-                            Toast.makeText(
-                                activity, "Invalid password, please try again.",
-                                Toast.LENGTH_LONG
-                            ).also {
-                                it.setGravity(Gravity.CENTER, 0, 0)
-                                it.show()
-                            }
-                        "ERROR_EMAIL_ALREADY_IN_USE" ->
-                            Toast.makeText(
-                                activity, "Email address is already in use.",
-                                Toast.LENGTH_LONG
-                            ).also {
-                                it.setGravity(Gravity.CENTER, 0, 0)
-                                it.show()
-                            }
-                        else -> {
-                            Toast.makeText(
-                                activity, "Login failed: ${exception.message}.",
-                                Toast.LENGTH_LONG
-                            ).also {
-                                it.setGravity(Gravity.CENTER, 0, 0)
-                                it.show()
+                        when (exception.errorCode) {
+                            "ERROR_USER_NOT_FOUND" ->
+                                Toast.makeText(
+                                    activity,
+                                    "Invalid email, please try again \nor create new account.",
+                                    Toast.LENGTH_LONG
+                                ).also {
+                                    it.setGravity(Gravity.CENTER, 0, 0)
+                                    it.show()
+                                }
+
+                            "ERROR_WRONG_PASSWORD" ->
+                                Toast.makeText(
+                                    activity, "Invalid password, please try again.",
+                                    Toast.LENGTH_LONG
+                                ).also {
+                                    it.setGravity(Gravity.CENTER, 0, 0)
+                                    it.show()
+                                }
+                            "ERROR_EMAIL_ALREADY_IN_USE" ->
+                                Toast.makeText(
+                                    activity, "Email address is already in use.",
+                                    Toast.LENGTH_LONG
+                                ).also {
+                                    it.setGravity(Gravity.CENTER, 0, 0)
+                                    it.show()
+                                }
+                            else -> {
+                                Toast.makeText(
+                                    activity, "Login failed: ${exception.message}.",
+                                    Toast.LENGTH_LONG
+                                ).also {
+                                    it.setGravity(Gravity.CENTER, 0, 0)
+                                    it.show()
+                                }
                             }
                         }
                     }
                 }
+        } else {
+            Toast.makeText(activity, "Logout successful", Toast.LENGTH_SHORT).also {
+                it.setGravity(Gravity.CENTER, 0, 0)
+                it.show()
             }
-    } else {
-        Toast.makeText(activity, "Logout succesfull", Toast.LENGTH_SHORT).also {
-            it.setGravity(Gravity.CENTER, 0, 0)
-            it.show()
-        }
-    }
-}
-
-
-private fun updateUI(user: FirebaseUser?) {
-    Log.d(TAG, "updateUI started")
-    if (user != null) {
-        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCalendarFragment())
-        Toast.makeText(
-            activity, "Login successful, welcome.",
-            Toast.LENGTH_SHORT
-        ).also {
-            it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
-            it.show()
-        }
-
-    } else {
-        Toast.makeText(
-            activity, "Login Failed, please try again",
-            Toast.LENGTH_SHORT
-        ).also {
-            it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
-            it.show()
         }
     }
 
-}
 
-override fun onStart() {
-    super.onStart()
+    private fun updateUI(user: FirebaseUser?) {
+        Log.d(TAG, "updateUI started")
+        if (user != null) {
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCalendarFragment())
+            Toast.makeText(
+                activity, "Login successful, welcome.",
+                Toast.LENGTH_SHORT
+            ).also {
+                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                it.show()
+            }
 
-    val currentUser = auth.currentUser
+        } else {
+            Toast.makeText(
+                activity, "Login Failed, please try again",
+                Toast.LENGTH_SHORT
+            ).also {
+                it.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0)
+                it.show()
+            }
+        }
 
-    if (currentUser != null && auth.currentUser!!.isEmailVerified) {
-        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCalendarFragment())
     }
 
-}
+    override fun onStart() {
+        super.onStart()
+        val currentUser = auth.currentUser
 
+        if (currentUser != null && auth.currentUser!!.isEmailVerified) {
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCalendarFragment())
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        email = ""
+        password = ""
+    }
 }

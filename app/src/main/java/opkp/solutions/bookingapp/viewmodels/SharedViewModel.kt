@@ -7,13 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import opkp.solutions.bookingapp.*
+import opkp.solutions.bookingapp.R.drawable
 import opkp.solutions.bookingapp.time.TimeData
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -28,16 +28,18 @@ private const val TAG = "ShareViewModel"
 class SharedViewModel : ViewModel() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var database: DatabaseReference
+    private lateinit var databaseReference: DatabaseReference
     private lateinit var currentDateFormatted: String
+    private lateinit var bookingsFromDB: MutableList<BookedData>
 
     var itemList = listOf<TimeData>()
     var pickedDate = ""
     var pickedTimeSlot: String = ""
     var pickedCourt = mutableListOf<Int>()
     var linearLayout = false
+    var bookingID = ""
+    var currentUserID = ""
 
-    var currentUserID: String? = ""
 
     var itemClick1 = false
     var itemClick2 = false
@@ -133,7 +135,7 @@ class SharedViewModel : ViewModel() {
 
             if (startHour > 21) {
                 val item = TimeData(
-                    R.drawable.ic_clock,
+                    drawable.ic_clock,
                     "No available time slots today, \npick another date please.",
                     "Unavailable"
                 )
@@ -142,7 +144,7 @@ class SharedViewModel : ViewModel() {
                 linearLayout = false
                 for (i in startHour until 22) {
                     val item =
-                        TimeData(R.drawable.ic_clock, "$i:00 - ${i + 1}:00", "Not booked")
+                        TimeData(drawable.ic_clock, "$i:00 - ${i + 1}:00", "Not booked")
                     itemList = itemList + item
                 }
             }
@@ -151,7 +153,7 @@ class SharedViewModel : ViewModel() {
             startHour = 7
             for (i in startHour until 22) {
                 val item =
-                    TimeData(R.drawable.ic_clock, "$i:00 - ${i + 1}:00", "Not booked")
+                    TimeData(drawable.ic_clock, "$i:00 - ${i + 1}:00", "Not booked")
                 itemList = itemList + item
             }
         }
@@ -163,36 +165,32 @@ class SharedViewModel : ViewModel() {
         return itemList
     }
 
-
-    fun getUserID(): String {
-        auth = FirebaseAuth.getInstance()
-        return auth.currentUser?.uid ?: throw NullPointerException("Expression 'uid' must not be null")
-    }
-
     fun writeNewUser() {
-        database = FirebaseDatabase.getInstance().getReference("users")
-        val bookingID = database.push().key!!
-        val user = BookedData(pickedDate, pickedTimeSlot, pickedCourt.sorted())
+        auth = FirebaseAuth.getInstance()
+
+        currentUserID = auth.currentUser?.uid!!
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("bookings")
+
+        val user = BookedData(currentUserID, pickedDate, pickedTimeSlot, pickedCourt.sorted())
         _loadingState.value = LoadingState()
 
 
-        currentUserID?.let { it ->
-            database.child(it).child(bookingID).setValue(user).addOnCompleteListener {
+        currentUserID.let { it ->
+            databaseReference.child(bookingID).setValue(user).addOnCompleteListener {
                 _loadingState.value = CompletedState()
             }
                 .addOnFailureListener {
                     _loadingState.value = ErrorState(it)
                 }
         }
-
-
     }
 
     fun initializeSharedViewModel() {
         itemList = emptyList()
         pickedDate = ""
         pickedTimeSlot = ""
-        pickedCourt = mutableListOf<Int>()
+        pickedCourt = mutableListOf()
         linearLayout = false
         _loadingState.value = null
 
@@ -219,8 +217,7 @@ class SharedViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         _connection.value = true
                     }
-                }
-                catch(ex: IOException) {
+                } catch (ex: IOException) {
                     withContext(Main) {
                         _connection.value = false
                     }
@@ -228,6 +225,34 @@ class SharedViewModel : ViewModel() {
             }
         }
         Log.d(TAG, "checkInternetConnection: ended, connection is: ${_connection.value}")
+    }
+
+    fun loadBookingsFromDB() {
+        bookingsFromDB = mutableListOf()
+        databaseReference = FirebaseDatabase.getInstance().getReference("bookings")
+        bookingID = databaseReference.push().key!!
+
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (i in snapshot.children) {
+                        val singleBookingfromDB = i.getValue(BookedData::class.java)
+                        Log.d(TAG, "Bookings from DB: ${singleBookingfromDB}")
+                        bookingsFromDB.add(singleBookingfromDB!!)
+                    }
+                }
+                Log.d(TAG, "list of bookings from DB is: $bookingsFromDB")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "Database error: $error")
+            }
+
+        })
+
+
     }
 
 }
