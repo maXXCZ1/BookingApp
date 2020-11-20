@@ -11,10 +11,13 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentLoginBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
@@ -75,6 +78,8 @@ class LoginFragment : Fragment() {
 
             } else {
                 loginUser(email, password)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.loadBookingsFromDB()}
             }
         }
 

@@ -52,6 +52,7 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
             container,
             false
         )
+        Log.d(TAG, "onCreateView started")
 
         adapter = TimeItemAdapter(viewModel.itemList, this, requireContext())
 

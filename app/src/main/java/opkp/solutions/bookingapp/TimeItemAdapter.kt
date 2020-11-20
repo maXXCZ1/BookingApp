@@ -3,7 +3,6 @@ package opkp.solutions.bookingapp
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recyclerview_time_item.view.*
 import opkp.solutions.bookingapp.time.TimeData
-import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 
 
 private const val TAG = "TimeItemAdapter"
@@ -33,8 +31,6 @@ class TimeItemAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: TimeItemViewHolder, position: Int) {
         val currentItem = timeItemDataList[position]
-
-        Log.d(TAG, "timeframe on position $position is ${timeItemDataList[position].time}")
 
         //TODO compare timeFrames with booked database for chosen day....
         if (timeItemDataList[position].time == "14:00 - 15:00") {

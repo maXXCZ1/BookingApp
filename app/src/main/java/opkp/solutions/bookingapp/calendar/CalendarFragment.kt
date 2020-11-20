@@ -2,18 +2,27 @@ package opkp.solutions.bookingapp.calendar
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentCalendarBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
+import java.util.*
+import kotlin.system.measureTimeMillis
 
 /**
  * A simple [Fragment] subclass.
@@ -39,7 +48,7 @@ class CalendarFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser!!
 
-//        viewModel.currentUserID = viewModel.getUserID()
+
     }
 
     override fun onCreateView(
@@ -52,6 +61,12 @@ class CalendarFragment : Fragment() {
             container,
             false)
 
+        viewModel.mapTimetoCourts = HashMap<String, List<Int>>()
+        Log.d(TAG, "map time to courts is ${viewModel.mapTimetoCourts.isEmpty()}, bookingDatabase is ${viewModel.bookingListFromDB}")
+
+        if(viewModel.bookingListFromDB.isEmpty()) {viewModel.loadBookingsFromDB()}
+
+
         binding.calendarview.setOnDateChangeListener { _, i, i2, i3 ->
             date = "$i3/${i2 + 1}/$i"
             viewModel.checkDate(date)
@@ -59,7 +74,6 @@ class CalendarFragment : Fragment() {
         }
 
         binding.buttonLogout.setOnClickListener {
-
             auth.signOut()
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToLoginFragment())
         }
@@ -69,9 +83,19 @@ class CalendarFragment : Fragment() {
         })
 
         binding.buttonNext2.setOnClickListener {
+            Log.d(TAG, "Next button clicked")
             viewModel.pickDate(date)
-            viewModel.loadBookingsFromDB()
-            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTimeFragment())
+
+            if(viewModel.bookingListFromDB.isNotEmpty()) {
+                viewModel.checkBookedCourts()
+                findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTimeFragment())
+            } else { Toast.makeText(requireContext(), "Unable to load data from database, \n please try again later", Toast.LENGTH_SHORT).also {
+               it.setGravity(Gravity.CENTER, 0,0)
+               it.show()
+            }
+            }
+
+
         }
 
         Log.d(TAG,

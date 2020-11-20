@@ -11,6 +11,7 @@ import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import opkp.solutions.bookingapp.*
 import opkp.solutions.bookingapp.R.drawable
@@ -20,9 +21,10 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.system.measureTimeMillis
 
 
-private const val TAG = "ShareViewModel"
+private const val TAG = "SharedViewModel"
 
 
 class SharedViewModel : ViewModel() {
@@ -30,8 +32,9 @@ class SharedViewModel : ViewModel() {
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseReference: DatabaseReference
     private lateinit var currentDateFormatted: String
-    private lateinit var bookingsFromDB: MutableList<BookedData>
 
+    var bookingListFromDB = mutableListOf<BookedData>()
+    var mapTimetoCourts = HashMap<String, List<Int>>()
     var itemList = listOf<TimeData>()
     var pickedDate = ""
     var pickedTimeSlot: String = ""
@@ -193,6 +196,8 @@ class SharedViewModel : ViewModel() {
         pickedCourt = mutableListOf()
         linearLayout = false
         _loadingState.value = null
+        mapTimetoCourts = HashMap<String, List<Int>>()
+
 
         itemClick1 = false
         itemClick2 = false
@@ -228,22 +233,25 @@ class SharedViewModel : ViewModel() {
     }
 
     fun loadBookingsFromDB() {
-        bookingsFromDB = mutableListOf()
+
         databaseReference = FirebaseDatabase.getInstance().getReference("bookings")
         bookingID = databaseReference.push().key!!
 
-
-        databaseReference.addValueEventListener(object : ValueEventListener {
+        //TODO implement coroutines
+        println("start job test, database reference is $databaseReference, bookingList is $bookingListFromDB")
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
+                bookingListFromDB.clear()
+                Log.d(TAG, "onDataCange listener started: cleared bookingList size is ${bookingListFromDB.size}")
                 if (snapshot.exists()) {
                     for (i in snapshot.children) {
-                        val singleBookingfromDB = i.getValue(BookedData::class.java)
-                        Log.d(TAG, "Bookings from DB: ${singleBookingfromDB}")
-                        bookingsFromDB.add(singleBookingfromDB!!)
+                        val singleBookingFromDB = i.getValue(BookedData::class.java)
+                        Log.d(TAG, "single booking is $singleBookingFromDB")
+                        bookingListFromDB.add(singleBookingFromDB!!)
                     }
                 }
-                Log.d(TAG, "list of bookings from DB is: $bookingsFromDB")
+                Log.d(TAG, "onDataCange listener ended: cleared bookingList is ${bookingListFromDB.size}")
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -252,7 +260,35 @@ class SharedViewModel : ViewModel() {
 
         })
 
+        Log.d(TAG, "loadBookingsFromDB endedBooking list before checkBookedCourts is $bookingListFromDB")
+    }
 
+    fun checkBookedCourts() {
+        val executionTimeOfBookedCourts = measureTimeMillis {
+            val joinedList = ArrayList<Int>()
+            Log.d(TAG,"checkBookedCourts started: database list is $bookingListFromDB, map is $mapTimetoCourts")
+            for (i in 0 until bookingListFromDB.size) {
+                if (bookingListFromDB[i].dateFromDB.contains(pickedDate)) {
+                    val itemList1 = bookingListFromDB[i].courtsFromDB
+
+                    if (mapTimetoCourts.containsKey(key = bookingListFromDB[i].timeSlotFromDB)) {
+                        val courtsFromHashMapList =
+                            mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB]
+
+                        joinedList.addAll(itemList1)
+                        joinedList.addAll(courtsFromHashMapList!!)
+                        mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB] = joinedList.sorted()
+                        joinedList.clear()
+                    } else {
+                        mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB] =
+                            bookingListFromDB[i].courtsFromDB
+                    }
+
+                    Log.d(TAG, "final map is $mapTimetoCourts")
+                }
+            }
+        }
+        Log.d(TAG, "processing time of checkBookedCourts: $executionTimeOfBookedCourts ms")
     }
 
 }
