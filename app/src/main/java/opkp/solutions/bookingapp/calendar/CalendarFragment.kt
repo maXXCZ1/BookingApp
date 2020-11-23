@@ -14,15 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentCalendarBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 import java.util.*
-import kotlin.system.measureTimeMillis
 
 /**
  * A simple [Fragment] subclass.
@@ -48,24 +44,25 @@ class CalendarFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         currentUser = auth.currentUser!!
 
+        Log.d(TAG, "onCreate started")
 
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate<FragmentCalendarBinding>(inflater,
             R.layout.fragment_calendar,
             container,
             false)
 
-        viewModel.mapTimetoCourts = HashMap<String, List<Int>>()
-        Log.d(TAG, "map time to courts is ${viewModel.mapTimetoCourts.isEmpty()}, bookingDatabase is ${viewModel.bookingListFromDB}")
+        viewModel.loadBookingsFromDB()
 
-        if(viewModel.bookingListFromDB.isEmpty()) {viewModel.loadBookingsFromDB()}
-
+        viewModel.mapTimeToCourts = HashMap<String, List<Int>>()
+        Log.d(TAG,
+            "map time to courts is ${viewModel.mapTimeToCourts.isEmpty()}, bookingDatabase is ${viewModel.bookingListFromDB}")
 
         binding.calendarview.setOnDateChangeListener { _, i, i2, i3 ->
             date = "$i3/${i2 + 1}/$i"
@@ -82,19 +79,25 @@ class CalendarFragment : Fragment() {
             binding.buttonNext2.isEnabled = !isTrue
         })
 
+        viewModel.isDatabaseLoadComplete.observe(viewLifecycleOwner) {
+            if(it == true) {
+                binding.buttonNext2.visibility = View.VISIBLE
+                binding.buttonLogout.visibility = View.VISIBLE
+            } else {
+                binding.buttonNext2.visibility = View.INVISIBLE
+                binding.buttonLogout.visibility = View.INVISIBLE
+            }
+        }
+
+
         binding.buttonNext2.setOnClickListener {
             Log.d(TAG, "Next button clicked")
             viewModel.pickDate(date)
 
-            if(viewModel.bookingListFromDB.isNotEmpty()) {
-                viewModel.checkBookedCourts()
-                findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTimeFragment())
-            } else { Toast.makeText(requireContext(), "Unable to load data from database, \n please try again later", Toast.LENGTH_SHORT).also {
-               it.setGravity(Gravity.CENTER, 0,0)
-               it.show()
-            }
-            }
+            //TODO check if firebase request finished
 
+            viewModel.checkBookedCourts()
+            findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTimeFragment())
 
         }
 
@@ -102,5 +105,4 @@ class CalendarFragment : Fragment() {
             "onCreateView ended: Picked date is ${viewModel.pickedDate}, time is: ${viewModel.pickedTimeSlot}, court(s) are: ${viewModel.pickedCourt}")
         return binding.root
     }
-
 }

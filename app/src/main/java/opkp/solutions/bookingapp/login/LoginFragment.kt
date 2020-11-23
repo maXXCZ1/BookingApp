@@ -78,8 +78,6 @@ class LoginFragment : Fragment() {
 
             } else {
                 loginUser(email, password)
-                lifecycleScope.launch(Dispatchers.IO) {
-                    viewModel.loadBookingsFromDB()}
             }
         }
 

@@ -54,35 +54,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-//        if (currentFragment != null && currentFragment == R.id.calendarFragment) {
-//            Toast.makeText(applicationContext,
-//                "Button disabled.\nUse buttons provided by application.",
-//                Toast.LENGTH_SHORT)
-//                .also {
-//                    it.setGravity(Gravity.CENTER, 0, 0)
-//                    it.show()
-//                }
-//        }
-//
-//        if (currentFragment != null && currentFragment == R.id.summaryFragment) {
-//
-//            Toast.makeText(applicationContext,
-//                "Button disabled.\nUse buttons provided by application.",
-//                Toast.LENGTH_SHORT)
-//                .also {
-//                    it.setGravity(Gravity.CENTER, 0, 0)
-//                    it.show()
-//                }
-//
-//        }
-//
-//        if (currentFragment != null && currentFragment == R.id.loginFragment) {
-//            finishAffinity()
-//
-//        }
-////        else super.onBackPressed()
-//    }
-
 
 
 
