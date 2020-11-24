@@ -54,7 +54,7 @@ class TimeFragment : Fragment(), TimeItemAdapter.OnItemClickListener {
         )
         Log.d(TAG, "onCreateView started")
 
-        adapter = TimeItemAdapter(viewModel.itemList, this, requireContext())
+        adapter = TimeItemAdapter(viewModel.itemList, this, requireActivity(), viewModel.mapTimetoCourts)
 
         binding.timeitemRecyclerview.adapter = adapter
         if(viewModel.linearLayout) {

@@ -112,16 +112,12 @@ class CourtFragment : Fragment() {
 
         binding.buttonBook.setOnClickListener {
             viewModel.writeNewUser()
-
-            Log.d(TAG,
-                "buttonBook pressed: saved courtNumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
-
+            Log.d(TAG,"buttonBook pressed: saved courtNumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
         }
 
-        binding.buttonPrevious2.setOnClickListener() {
+        binding.buttonPrevious2.setOnClickListener {
             findNavController().popBackStack()
         }
-
 
         return binding.root
     }

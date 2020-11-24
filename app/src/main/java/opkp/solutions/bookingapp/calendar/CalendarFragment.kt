@@ -2,15 +2,12 @@ package opkp.solutions.bookingapp.calendar
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -58,11 +55,23 @@ class CalendarFragment : Fragment() {
             container,
             false)
 
+        viewModel.dataLoadCompleted.observe(viewLifecycleOwner) {
+            if(!it) {
+                binding.clCourtfragment2.visibility = View.VISIBLE
+                binding.buttonLogout.isEnabled = false
+                binding.buttonNext2.isEnabled = false
+            } else {
+                binding.clCourtfragment2.visibility = View.GONE
+                binding.buttonLogout.isEnabled = true
+                binding.buttonNext2.isEnabled = true
+            }
+        }
+
         viewModel.loadBookingsFromDB()
 
-        viewModel.mapTimeToCourts = HashMap<String, List<Int>>()
+        viewModel.mapTimetoCourts = HashMap<String, List<Int>>()
         Log.d(TAG,
-            "map time to courts is ${viewModel.mapTimeToCourts.isEmpty()}, bookingDatabase is ${viewModel.bookingListFromDB}")
+            "map time to courts is ${viewModel.mapTimetoCourts.isEmpty()}, bookingDatabase is ${viewModel.bookingListFromDB}")
 
         binding.calendarview.setOnDateChangeListener { _, i, i2, i3 ->
             date = "$i3/${i2 + 1}/$i"
@@ -78,17 +87,6 @@ class CalendarFragment : Fragment() {
         viewModel.invalidDate.observe(viewLifecycleOwner, { isTrue ->
             binding.buttonNext2.isEnabled = !isTrue
         })
-
-        viewModel.isDatabaseLoadComplete.observe(viewLifecycleOwner) {
-            if(it == true) {
-                binding.buttonNext2.visibility = View.VISIBLE
-                binding.buttonLogout.visibility = View.VISIBLE
-            } else {
-                binding.buttonNext2.visibility = View.INVISIBLE
-                binding.buttonLogout.visibility = View.INVISIBLE
-            }
-        }
-
 
         binding.buttonNext2.setOnClickListener {
             Log.d(TAG, "Next button clicked")
