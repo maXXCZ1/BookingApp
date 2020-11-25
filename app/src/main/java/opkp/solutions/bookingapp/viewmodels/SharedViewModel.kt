@@ -41,7 +41,6 @@ class SharedViewModel : ViewModel() {
     var bookingID = ""
     var currentUserID = ""
 
-
     var itemClick1 = false
     var itemClick2 = false
     var itemClick3 = false
@@ -179,12 +178,12 @@ class SharedViewModel : ViewModel() {
 
 //
 //        currentUserID.let {
-            databaseReference.child(bookingID).setValue(user).addOnCompleteListener {
-                _loadingState.value = CompletedState()
+        databaseReference.child(bookingID).setValue(user).addOnCompleteListener {
+            _loadingState.value = CompletedState()
+        }
+            .addOnFailureListener {
+                _loadingState.value = ErrorState(it)
             }
-                .addOnFailureListener {
-                    _loadingState.value = ErrorState(it)
-                }
 //        }
     }
 
@@ -231,60 +230,61 @@ class SharedViewModel : ViewModel() {
         Log.d(TAG, "checkInternetConnection: ended, connection is: ${_connection.value}")
     }
 
-    //TODO implement coroutines
-
-
-    fun loadBookingsFromDB(){
+    fun loadBookingsFromDB() {
         Log.d(TAG, "loadBookingsFromDB started")
         _dataLoadCompleted.value = false
 
         databaseReference = FirebaseDatabase.getInstance().getReference("bookings")
 
-            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
 
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    bookingListFromDB.clear()
-                    Log.d(TAG,"onDataChange listener started: cleared bookingList size is ${bookingListFromDB.size}, performed on thread ${Thread.currentThread().name}")
-                    if (snapshot.exists()) {
-                        for (i in snapshot.children) {
-                            val singleBookingFromDB = i.getValue(BookedData::class.java)
-                            Log.d(TAG, "single booking is $singleBookingFromDB")
-                            bookingListFromDB.add(singleBookingFromDB!!)
-                        }
-                        _dataLoadCompleted.value = true
+            override fun onDataChange(snapshot: DataSnapshot) {
+                bookingListFromDB.clear()
+                Log.d(TAG,
+                    "onDataChange listener started: cleared bookingList size is ${bookingListFromDB.size}, performed on thread ${Thread.currentThread().name}")
+                if (snapshot.exists()) {
+                    for (i in snapshot.children) {
+                        val singleBookingFromDB = i.getValue(BookedData::class.java)
+                        Log.d(TAG, "single booking is $singleBookingFromDB")
+                        bookingListFromDB.add(singleBookingFromDB!!)
                     }
-                    Log.d(TAG, "loadBookingsFromDB endedBooking list before checkBookedCourts is $bookingListFromDB")
                 }
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e(TAG, "Database error: $error")
-                }
+                _dataLoadCompleted.value = true
+                Log.d(TAG,
+                    "loadBookingsFromDB endedBooking list before checkBookedCourts is $bookingListFromDB")
+            }
 
-            })
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "Database error: $error")
+            }
+
+        })
     }
 
     fun checkBookedCourts() {
 
-            val joinedList = ArrayList<Int>()
-            Log.d(TAG,"checkBookedCourts started: database list is $bookingListFromDB, map is $mapTimetoCourts")
-            for (i in 0 until bookingListFromDB.size) {
-                if (bookingListFromDB[i].dateFromDB.contains(pickedDate)) {
-                    val itemList1 = bookingListFromDB[i].courtsFromDB
+        val joinedList = ArrayList<Int>()
+        Log.d(TAG,
+            "checkBookedCourts started: database list is $bookingListFromDB, map is $mapTimetoCourts")
+        for (i in 0 until bookingListFromDB.size) {
+            if (bookingListFromDB[i].dateFromDB.contains(pickedDate)) {
+                val itemList1 = bookingListFromDB[i].courtsFromDB
 
-                    if (mapTimetoCourts.containsKey(key = bookingListFromDB[i].timeSlotFromDB)) {
-                        val courtsFromHashMapList = mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB]
+                if (mapTimetoCourts.containsKey(key = bookingListFromDB[i].timeSlotFromDB)) {
+                    val courtsFromHashMapList = mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB]
 
-                        joinedList.addAll(itemList1)
-                        joinedList.addAll(courtsFromHashMapList!!)
-                        mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB] = joinedList.sorted()
-                        joinedList.clear()
-                    } else {
-                        mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB] =
-                            bookingListFromDB[i].courtsFromDB
-                    }
-
-
+                    joinedList.addAll(itemList1)
+                    joinedList.addAll(courtsFromHashMapList!!)
+                    mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB] = joinedList.sorted()
+                    joinedList.clear()
+                } else {
+                    mapTimetoCourts[bookingListFromDB[i].timeSlotFromDB] =
+                        bookingListFromDB[i].courtsFromDB
                 }
+
+
             }
+        }
         Log.d(TAG, "final map is $mapTimetoCourts")
     }
 

@@ -28,7 +28,10 @@
     <string name="summary_text">Summary</string>
     <string name="button_new_reservation">Make another reservation</string>
     <string name="btn_manage_reservation_text">Manage my reservations</string>
-    <string name="status_booked">Booked</string>
+    <string name="status_booked">Fully booked</string>
+    <string name="button_back">Back</string>
+    <string name="summary_title">Your bookings</string>
+    <string name="cancel_reservation_text">Cancel reservation</string>
 
     <string-array name="stepview_entries">
         <item>Day</item>

@@ -92,8 +92,6 @@ class CalendarFragment : Fragment() {
             Log.d(TAG, "Next button clicked")
             viewModel.pickDate(date)
 
-            //TODO check if firebase request finished
-
             viewModel.checkBookedCourts()
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTimeFragment())
 

@@ -40,19 +40,16 @@ class TimeItemAdapter(
 
         currentMap = map
         Log.d(TAG, "currentMap size is ${currentMap.size}")
-        val testList = listOf(1,2,3,4)
+        val fullListOfBookedCourts = listOf(1,2,3,4)
         val timeSlotFromMap = currentMap[currentItem.time]
-        Log.d(TAG, "onBindViewHolder started: current Item is $currentItem, currentMap is $currentMap")
 
-        //TODO compare timeFrames with booked database for chosen day....
-        if (timeSlotFromMap == testList) {
+        if (timeSlotFromMap == fullListOfBookedCourts) {
             holder.itemView.isEnabled = false
             holder.layout.setBackgroundResource(R.drawable.customborder_grey)
             holder.imageView.setImageResource(currentItem.image)
             holder.timeFrame.text = currentItem.time
             holder.status.text = context.getString(R.string.status_booked)
         } else {
-
             holder.layout.setBackgroundResource(currentItem.layoutBG)
             holder.imageView.setImageResource(currentItem.image)
             holder.timeFrame.text = currentItem.time

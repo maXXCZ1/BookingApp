@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.Nullable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +18,8 @@ import opkp.solutions.bookingapp.LoadingState
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentCourtBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
+import java.lang.Exception
+import java.lang.NullPointerException
 
 private const val TAG = "CourtFragment"
 
@@ -47,7 +50,38 @@ class CourtFragment : Fragment() {
             container,
             false)
 
-        //TODO check if some of the courts are already booked in database and disable them for onclick + set grey background
+            checkCourtsState()
+//        val map = viewModel.mapTimetoCourts
+//        val  alreadyBookedCourts: List<Int>? = map[viewModel.pickedTimeSlot]
+//
+//        //TODO handle alreadyBookedCourts == null better way
+//
+//        Log.d(TAG, "CheckCourtsState started: $map, already booked courts are $alreadyBookedCourts")
+//
+//        if(alreadyBookedCourts.isNullOrEmpty()) {
+//            Log.d(TAG, "alreadyBookedCourts are $alreadyBookedCourts")
+//        } else {
+//            for (i in alreadyBookedCourts.indices) {
+//                when (i) {
+//                    1 -> {
+//                        binding.imCourt1.setImageResource(R.drawable.court1_grey)
+//                        binding.imCourt1.isEnabled = false
+//                    }
+//                    2 -> {
+//                        binding.imCourt2.setImageResource(R.drawable.court2_grey)
+//                        binding.imCourt2.isEnabled = false
+//                    }
+//                    3 -> {
+//                        binding.imCourt3.setImageResource(R.drawable.court3_grey)
+//                        binding.imCourt3.isEnabled = false
+//                    }
+//                    4 -> {
+//                        binding.imCourt4.setImageResource(R.drawable.court4_grey)
+//                        binding.imCourt4.isEnabled = false
+//                    }
+//                }
+//            }
+//        }
 
         viewModel.loadingState.observe(viewLifecycleOwner, { dataState ->
             when (dataState) {
@@ -112,7 +146,8 @@ class CourtFragment : Fragment() {
 
         binding.buttonBook.setOnClickListener {
             viewModel.writeNewUser()
-            Log.d(TAG,"buttonBook pressed: saved courtNumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
+            Log.d(TAG,
+                "buttonBook pressed: saved courtNumbers are ${viewModel.pickedCourt}, anyCourtClicked is ${viewModel.anyCourtClicked}")
         }
 
         binding.buttonPrevious2.setOnClickListener {
@@ -190,5 +225,41 @@ class CourtFragment : Fragment() {
         Log.d(TAG,
             "onResume ended, courtNumbers are ${viewModel.pickedCourt}, itemclicks are: ${viewModel.itemClick1}, ${viewModel.itemClick2}, ${viewModel.itemClick3} and ${viewModel.itemClick4}, \n" +
                     " anyCourtClicked is: ${viewModel.anyCourtClicked}")
+    }
+
+    private fun checkCourtsState() {
+
+        val map = viewModel.mapTimetoCourts
+        val  alreadyBookedCourts = map[viewModel.pickedTimeSlot]
+
+        //TODO handle alreadyBookedCourts better way
+
+        Log.d(TAG, "CheckCourtsState started: $map, already booked courts are $alreadyBookedCourts")
+
+        if(alreadyBookedCourts.isNullOrEmpty()) {
+            Log.d(TAG, "alreadyBookedCourts are $alreadyBookedCourts")
+        } else {
+            for (i in alreadyBookedCourts.indices) {
+                Log.d(TAG,"loop in checkCourtsState started: current iteration is $i")
+                when (alreadyBookedCourts[i]) {
+                    1 -> {
+                        binding.imCourt1.setImageResource(R.drawable.court1_grey)
+                        binding.imCourt1.isEnabled = false
+                    }
+                    2 -> {
+                        binding.imCourt2.setImageResource(R.drawable.court2_grey)
+                        binding.imCourt2.isEnabled = false
+                    }
+                    3 -> {
+                        binding.imCourt3.setImageResource(R.drawable.court3_grey)
+                        binding.imCourt3.isEnabled = false
+                    }
+                    4 -> {
+                        binding.imCourt4.setImageResource(R.drawable.court4_grey)
+                        binding.imCourt4.isEnabled = false
+                    }
+                }
+            }
+        }
     }
 }
