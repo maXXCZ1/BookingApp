@@ -71,6 +71,7 @@ class SummaryFragment : Fragment() {
         }
 
         binding.btnManageReservations.setOnClickListener {
+            viewModel.resetDataLoadState()
             findNavController().navigate(SummaryFragmentDirections.actionSummaryFragmentToManageReservationsFragment())
         }
 

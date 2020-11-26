@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -58,12 +59,12 @@ class CalendarFragment : Fragment() {
         viewModel.dataLoadCompleted.observe(viewLifecycleOwner) {
             if(!it) {
                 binding.clCourtfragment2.visibility = View.VISIBLE
-                binding.buttonLogout.isEnabled = false
-                binding.buttonNext2.isEnabled = false
+                binding.buttonLogout.isClickable = false
+                binding.buttonNext2.isClickable = false
             } else {
                 binding.clCourtfragment2.visibility = View.GONE
-                binding.buttonLogout.isEnabled = true
-                binding.buttonNext2.isEnabled = true
+                binding.buttonLogout.isClickable = true
+                binding.buttonNext2.isClickable= true
             }
         }
 

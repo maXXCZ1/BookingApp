@@ -50,38 +50,7 @@ class CourtFragment : Fragment() {
             container,
             false)
 
-            checkCourtsState()
-//        val map = viewModel.mapTimetoCourts
-//        val  alreadyBookedCourts: List<Int>? = map[viewModel.pickedTimeSlot]
-//
-//        //TODO handle alreadyBookedCourts == null better way
-//
-//        Log.d(TAG, "CheckCourtsState started: $map, already booked courts are $alreadyBookedCourts")
-//
-//        if(alreadyBookedCourts.isNullOrEmpty()) {
-//            Log.d(TAG, "alreadyBookedCourts are $alreadyBookedCourts")
-//        } else {
-//            for (i in alreadyBookedCourts.indices) {
-//                when (i) {
-//                    1 -> {
-//                        binding.imCourt1.setImageResource(R.drawable.court1_grey)
-//                        binding.imCourt1.isEnabled = false
-//                    }
-//                    2 -> {
-//                        binding.imCourt2.setImageResource(R.drawable.court2_grey)
-//                        binding.imCourt2.isEnabled = false
-//                    }
-//                    3 -> {
-//                        binding.imCourt3.setImageResource(R.drawable.court3_grey)
-//                        binding.imCourt3.isEnabled = false
-//                    }
-//                    4 -> {
-//                        binding.imCourt4.setImageResource(R.drawable.court4_grey)
-//                        binding.imCourt4.isEnabled = false
-//                    }
-//                }
-//            }
-//        }
+        checkCourtsState()
 
         viewModel.loadingState.observe(viewLifecycleOwner, { dataState ->
             when (dataState) {

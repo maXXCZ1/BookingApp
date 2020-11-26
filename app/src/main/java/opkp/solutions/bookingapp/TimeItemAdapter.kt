@@ -12,24 +12,24 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recyclerview_time_item.view.*
 import opkp.solutions.bookingapp.time.TimeData
-import java.util.HashMap
+import java.util.*
 
 
 private const val TAG = "TimeItemAdapter"
 
 class TimeItemAdapter(
     private val timeItemDataList: List<TimeData>,
-    private val listener: OnItemClickListener, val context: Context, val map: HashMap<String, List<Int>>
+    private val listener: OnItemClickListener,
+    private val context: Context,
+    private val map: HashMap<String, List<Int>>,
 ) :
     RecyclerView.Adapter<TimeItemAdapter.TimeItemViewHolder>() {
 
     private var currentMap = hashMapOf<String, List<Int>>()
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeItemViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.recyclerview_time_item, parent, false)
-
 
         return TimeItemViewHolder(itemView)
     }
@@ -40,7 +40,7 @@ class TimeItemAdapter(
 
         currentMap = map
         Log.d(TAG, "currentMap size is ${currentMap.size}")
-        val fullListOfBookedCourts = listOf(1,2,3,4)
+        val fullListOfBookedCourts = listOf(1, 2, 3, 4)
         val timeSlotFromMap = currentMap[currentItem.time]
 
         if (timeSlotFromMap == fullListOfBookedCourts) {
@@ -62,7 +62,7 @@ class TimeItemAdapter(
     inner class TimeItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
-        val layout: ConstraintLayout = itemView.rv_item_layout!!
+        val layout: ConstraintLayout = itemView.rv_managereservations_item_layout!!
         val imageView = itemView.im_clock!!
         val timeFrame: TextView = itemView.tv_timeframe
         val status: TextView = itemView.tv_status
@@ -70,7 +70,6 @@ class TimeItemAdapter(
 
         init {
             itemView.setOnClickListener(this)
-
         }
 
         override fun onClick(p0: View?) {

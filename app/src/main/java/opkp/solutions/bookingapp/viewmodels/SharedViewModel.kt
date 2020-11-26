@@ -195,6 +195,7 @@ class SharedViewModel : ViewModel() {
         linearLayout = false
         _loadingState.value = null
         mapTimetoCourts = HashMap<String, List<Int>>()
+        _dataLoadCompleted.value = false
 
 
         itemClick1 = false
@@ -231,9 +232,9 @@ class SharedViewModel : ViewModel() {
     }
 
     fun loadBookingsFromDB() {
+
         Log.d(TAG, "loadBookingsFromDB started")
         _dataLoadCompleted.value = false
-
         databaseReference = FirebaseDatabase.getInstance().getReference("bookings")
 
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -288,4 +289,7 @@ class SharedViewModel : ViewModel() {
         Log.d(TAG, "final map is $mapTimetoCourts")
     }
 
+    fun resetDataLoadState(){
+        _dataLoadCompleted.value = false
+    }
 }
