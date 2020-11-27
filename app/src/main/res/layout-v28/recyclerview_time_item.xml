@@ -28,7 +28,7 @@
         android:id="@+id/tv_timeframe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:text="@string/timeframe_text"
         android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="@+id/tv_status"

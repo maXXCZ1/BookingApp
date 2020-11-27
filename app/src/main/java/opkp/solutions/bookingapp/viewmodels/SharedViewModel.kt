@@ -40,6 +40,7 @@ class SharedViewModel : ViewModel() {
     var linearLayout = false
     var bookingID = ""
     var currentUserID = ""
+    var filteredList  = mutableListOf<BookedData>()
 
     var itemClick1 = false
     var itemClick2 = false
@@ -291,5 +292,15 @@ class SharedViewModel : ViewModel() {
 
     fun resetDataLoadState(){
         _dataLoadCompleted.value = false
+    }
+
+    fun filterBookingList(){
+
+        for (booking in bookingListFromDB) {
+            if (booking.currentUserID == currentUserID) {
+                filteredList.add(booking)
+            }
+        }
+
     }
 }
