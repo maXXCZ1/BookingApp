@@ -1,23 +1,21 @@
 package opkp.solutions.bookingapp.managereservations
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import opkp.solutions.bookingapp.BookedData
+import androidx.recyclerview.widget.RecyclerView
 import opkp.solutions.bookingapp.MyReservationItemAdapter
 import opkp.solutions.bookingapp.R
-import opkp.solutions.bookingapp.TimeItemAdapter
 import opkp.solutions.bookingapp.databinding.FragmentManageReservationsBinding
 import opkp.solutions.bookingapp.viewmodels.SharedViewModel
 
@@ -28,15 +26,18 @@ private const val TAG = "MNGReservationsFragment"
  * Use the [ManageReservationsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ManageReservationsFragment : Fragment(), MyReservationItemAdapter.OnMyReservationItemClickListener {
+class ManageReservationsFragment : Fragment(),
+    MyReservationItemAdapter.OnMyReservationItemClickListener {
 
 
     private lateinit var binding: FragmentManageReservationsBinding
     private lateinit var adapter: MyReservationItemAdapter
     private lateinit var viewModel: SharedViewModel
 
-    private var isItemClicked = 0
-    var savedPosition: Int = -1
+
+
+    private var isItemClicked = false
+    private var savedPosition: Int = -1
 
     //TODO show all my reservations in RecyclerView and let user to cancel chosen one
 
@@ -50,6 +51,8 @@ class ManageReservationsFragment : Fragment(), MyReservationItemAdapter.OnMyRese
             container,
             false)
 
+
+
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
 
         viewModel.dataLoadCompleted.observe(viewLifecycleOwner) {
@@ -61,23 +64,34 @@ class ManageReservationsFragment : Fragment(), MyReservationItemAdapter.OnMyRese
             } else {
                 viewModel.filteredList = mutableListOf()
                 binding.clProgressbar2.visibility = View.GONE
-//                binding.buttonCancelReservation.isClickable = true
                 binding.btnBackToSummary.isClickable = true
                 Log.d(TAG, "bookingListFromDB size is ${viewModel.bookingListFromDB.size} ")
 
                 viewModel.filterBookingList()
-
-                adapter = MyReservationItemAdapter(viewModel.filteredList, viewModel.currentUserID, this)
+                adapter =
+                    MyReservationItemAdapter(viewModel.filteredList, viewModel.currentUserID, this)
                 binding.recyclerView.adapter = adapter
                 binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-                binding.recyclerView.setHasFixedSize(true)
+
+
             }
         }
 
         viewModel.loadBookingsFromDB()
 
+
         binding.buttonCancelReservation.setOnClickListener {
-            //TODO implement deleting picked entry from firebase
+            if(savedPosition != -1) {
+                viewModel.filteredList.removeAt(savedPosition)
+                adapter.notifyDataSetChanged()
+                binding.buttonCancelReservation.isEnabled = false
+                savedPosition = -1
+                isItemClicked = false
+            } else {
+                Toast.makeText(requireContext(),
+                    "Something went wrong while deleting Reservation",
+                    Toast.LENGTH_SHORT).show()
+            }
             Log.d(TAG, "cancel reservation clicked")
         }
 
@@ -87,40 +101,30 @@ class ManageReservationsFragment : Fragment(), MyReservationItemAdapter.OnMyRese
         return binding.root
     }
 
-    override fun onItemClick(currentView: View, position: Int) {
+    //TODO How do i change background color on single recyclerView item?!?!?!
+    override fun onItemClick(position: Int) {
+        Log.d(TAG, "onItemClick started, recyclerview childcount ${binding.recyclerView.childCount}")
 
-        Log.d(TAG, "onItemclick started: position is $position, savedPosition is $savedPosition")
-        val currentItem = viewModel.filteredList[position]
-        val myView = currentView
-
-
-
-        if(savedPosition != position && isItemClicked == 0) {
-            myView.setBackgroundResource(R.drawable.customborder_blue)
-            binding.buttonCancelReservation.isEnabled = true
-            isItemClicked = 1
+        if (!isItemClicked && savedPosition == -1) {
+//            binding.recyclerView[position].setBackgroundResource(R.drawable.customborder_blue)
             savedPosition = position
-            Log.d(TAG, "savedPosition is $savedPosition, position is $position test date is ${currentItem.dateFromDB}, isItemClicked $isItemClicked,\ncurrentItem courts are ${viewModel.filteredList[position].courtsFromDB}")
-
+            isItemClicked = true
+            binding.buttonCancelReservation.isEnabled = true
         } else {
-            if (position == savedPosition && isItemClicked == 1) {
-                myView.setBackgroundResource(R.drawable.customborder)
-                binding.buttonCancelReservation.isEnabled = false
-                isItemClicked = 0
+            if (isItemClicked && savedPosition == position) {
+//                binding.recyclerView[position].setBackgroundResource(R.drawable.customborder)
                 savedPosition = -1
-                Log.d(TAG,"test date is ${currentItem.dateFromDB}, itemclick is $isItemClicked, position is $position, savedPosition is $savedPosition")
+                isItemClicked = false
+                binding.buttonCancelReservation.isEnabled = false
 
             }
             else {
-                Log.d(TAG, "You can choose only one reservation, test date is ${currentItem.dateFromDB}, itemclick is $isItemClicked, position is $position, savedPosition is $savedPosition")
-                Toast.makeText(requireContext(), "You can choose only one reservation", Toast.LENGTH_SHORT).also {
-                    it.setGravity(Gravity.CENTER, 0,0)
-                    it.show()
-                }
+                Toast.makeText(requireContext(),
+                    "You can choose only one item, currently chosen item is no: $savedPosition",
+                    Toast.LENGTH_SHORT).show()
             }
         }
-//        Log.d(TAG, "")
-//        adapter.notifyItemChanged(position)
-    }
 
+        Log.d(TAG, "isItemClicked is $isItemClicked, savedPosition is $savedPosition, position is $position")
+    }
 }

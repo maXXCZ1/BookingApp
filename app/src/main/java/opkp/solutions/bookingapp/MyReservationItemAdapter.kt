@@ -1,25 +1,36 @@
 package opkp.solutions.bookingapp
 
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recyclerview_myreservations_item.view.*
+import kotlin.coroutines.coroutineContext
 
 private const val TAG = "MyReserVationAdapter"
 
-class MyReservationItemAdapter(private val bookingList: MutableList<BookedData>, private val currentUserID: String, private val listener: OnMyReservationItemClickListener) :
-    RecyclerView.Adapter<MyReservationItemAdapter.ViewHolder>() {
+    private var savedPosition = -1
+    private var isClicked = 0
+
+class MyReservationItemAdapter(
+    private val bookingList: MutableList<BookedData>,
+    private val currentUserID: String,
+    val listener: OnMyReservationItemClickListener)
+    : RecyclerView.Adapter<MyReservationItemAdapter.ViewHolder>() {
+    var rowIndex = 0
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.recyclerview_myreservations_item, viewGroup, false)
-
 
         return ViewHolder(view)
     }
@@ -39,13 +50,15 @@ class MyReservationItemAdapter(private val bookingList: MutableList<BookedData>,
             view.setOnClickListener(this)
         }
 
-        override fun onClick(v: View?) {
+
+
+        override fun onClick(v: View) {
             val position = adapterPosition
-            val currentView = itemView
             if(position != RecyclerView.NO_POSITION) {
-                listener.onItemClick(currentView, position)
+                listener.onItemClick(position)
             }
         }
+
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -70,17 +83,32 @@ class MyReservationItemAdapter(private val bookingList: MutableList<BookedData>,
         }
         else {
             val errorMessage = "Error loading data from Database"
+            viewHolder.layout.setBackgroundResource(R.drawable.customborder)
             viewHolder.listImage.setImageResource(R.drawable.ic_list)
             viewHolder.date.text = errorMessage
             viewHolder.time.text = ""
             viewHolder.courts.text = ""
         }
+
+//        viewHolder.layout.setOnClickListener {
+//            Log.d(TAG, "current rowIndex is $rowIndex")
+//            rowIndex = position
+//
+//            Log.d(TAG, "new rowIndex is $rowIndex")
+//
+//            if (rowIndex == position) {
+//                viewHolder.layout.setBackgroundResource(R.drawable.customborder_blue)
+//            } else {
+//                viewHolder.layout.setBackgroundResource(R.drawable.customborder)
+//            }
+//            notifyDataSetChanged()
+//        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = bookingList.size
 
     interface OnMyReservationItemClickListener{
-        fun onItemClick(view: View, position: Int)
+        fun onItemClick(position: Int)
     }
 }

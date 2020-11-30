@@ -59,14 +59,13 @@ class TimeItemAdapter(
 
     override fun getItemCount() = timeItemDataList.size
 
-    inner class TimeItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+     inner class TimeItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
         val layout: ConstraintLayout = itemView.rv_managereservations_item_layout!!
         val imageView = itemView.im_clock!!
         val timeFrame: TextView = itemView.tv_timeframe
         val status: TextView = itemView.tv_status
-        val context = itemView.context!!
 
         init {
             itemView.setOnClickListener(this)
