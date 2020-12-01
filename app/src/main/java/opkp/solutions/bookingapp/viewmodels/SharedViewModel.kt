@@ -301,6 +301,11 @@ class SharedViewModel : ViewModel() {
                 filteredList.add(booking)
             }
         }
+    }
+
+    fun deleteBookingFromDB() {
+
+        Log.d(TAG, "deleteBookingFromDB started: database reference is ${databaseReference}, list ist $filteredList")
 
     }
 }

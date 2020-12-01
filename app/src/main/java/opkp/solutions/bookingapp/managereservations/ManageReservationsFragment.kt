@@ -1,19 +1,17 @@
 package opkp.solutions.bookingapp.managereservations
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import opkp.solutions.bookingapp.MyReservationItemAdapter
 import opkp.solutions.bookingapp.R
 import opkp.solutions.bookingapp.databinding.FragmentManageReservationsBinding
@@ -33,7 +31,6 @@ class ManageReservationsFragment : Fragment(),
     private lateinit var binding: FragmentManageReservationsBinding
     private lateinit var adapter: MyReservationItemAdapter
     private lateinit var viewModel: SharedViewModel
-
 
 
     private var isItemClicked = false
@@ -66,10 +63,15 @@ class ManageReservationsFragment : Fragment(),
                 binding.clProgressbar2.visibility = View.GONE
                 binding.btnBackToSummary.isClickable = true
                 Log.d(TAG, "bookingListFromDB size is ${viewModel.bookingListFromDB.size} ")
-
                 viewModel.filterBookingList()
-                adapter =
-                    MyReservationItemAdapter(viewModel.filteredList, viewModel.currentUserID, this)
+                adapter = MyReservationItemAdapter(
+                    viewModel.filteredList,
+                    viewModel.currentUserID,
+                    requireContext(),
+                    -1,
+                    false,
+                    this,
+                )
                 binding.recyclerView.adapter = adapter
                 binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -81,18 +83,10 @@ class ManageReservationsFragment : Fragment(),
 
 
         binding.buttonCancelReservation.setOnClickListener {
-            if(savedPosition != -1) {
-                viewModel.filteredList.removeAt(savedPosition)
-                adapter.notifyDataSetChanged()
-                binding.buttonCancelReservation.isEnabled = false
-                savedPosition = -1
-                isItemClicked = false
-            } else {
-                Toast.makeText(requireContext(),
-                    "Something went wrong while deleting Reservation",
-                    Toast.LENGTH_SHORT).show()
-            }
-            Log.d(TAG, "cancel reservation clicked")
+            Log.d(TAG, "buttonCancelReservation clicked")
+
+            getConfirmationFromDialog()
+
         }
 
         binding.btnBackToSummary.setOnClickListener {
@@ -103,28 +97,71 @@ class ManageReservationsFragment : Fragment(),
 
     //TODO How do i change background color on single recyclerView item?!?!?!
     override fun onItemClick(position: Int) {
-        Log.d(TAG, "onItemClick started, recyclerview childcount ${binding.recyclerView.childCount}")
+        Log.d(TAG,
+            "onItemClick started, recyclerview childcount ${binding.recyclerView.childCount}")
 
         if (!isItemClicked && savedPosition == -1) {
-//            binding.recyclerView[position].setBackgroundResource(R.drawable.customborder_blue)
             savedPosition = position
             isItemClicked = true
             binding.buttonCancelReservation.isEnabled = true
+            binding.buttonCancelReservation.setBackgroundColor(Color.RED)
         } else {
             if (isItemClicked && savedPosition == position) {
-//                binding.recyclerView[position].setBackgroundResource(R.drawable.customborder)
                 savedPosition = -1
                 isItemClicked = false
                 binding.buttonCancelReservation.isEnabled = false
+                binding.buttonCancelReservation.setBackgroundColor(Color.LTGRAY)
 
-            }
-            else {
-                Toast.makeText(requireContext(),
-                    "You can choose only one item, currently chosen item is no: $savedPosition",
-                    Toast.LENGTH_SHORT).show()
             }
         }
 
-        Log.d(TAG, "isItemClicked is $isItemClicked, savedPosition is $savedPosition, position is $position")
+        Log.d(TAG,
+            "isItemClicked is $isItemClicked, savedPosition is $savedPosition, position is $position")
+    }
+
+    private fun getConfirmationFromDialog() {
+        var confirmation: Boolean = false
+        val alertDialog = AlertDialog.Builder(requireContext())
+
+        with(alertDialog) {
+            setTitle("Cancellation confirmation ")
+            setMessage("Are you sure?")
+            setIcon(R.drawable.ic_questionmark)
+            setNegativeButton("Cancel") { _, _ ->
+                deleteItemFromDB(confirmation)
+            }
+            setPositiveButton("OK") { _, _ ->
+                confirmation = true
+                deleteItemFromDB(confirmation)
+            }
+            show()
+        }
+        Log.d(TAG, "getConfirmationFromDialog ended, confirmation is $confirmation")
+
+    }
+
+    private fun deleteItemFromDB(conf: Boolean) {
+        Log.d(TAG, "deleteItemFromDB started, conf is $conf")
+        if (conf) {
+            viewModel.filteredList.removeAt(savedPosition)
+            viewModel.deleteBookingFromDB()
+            adapter = MyReservationItemAdapter(
+                viewModel.filteredList,
+                viewModel.currentUserID,
+                requireContext(),
+                -1,
+                false,
+                this,
+            )
+            binding.recyclerView.adapter = adapter
+
+            binding.buttonCancelReservation.isEnabled = false
+            binding.buttonCancelReservation.setBackgroundColor(Color.LTGRAY)
+            savedPosition = -1
+            isItemClicked = false
+        }
+//        else {
+//            Log.d(TAG, "doing nothing")
+//        }
     }
 }
