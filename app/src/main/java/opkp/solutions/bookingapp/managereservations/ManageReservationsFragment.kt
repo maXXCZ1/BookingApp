@@ -3,7 +3,6 @@ package opkp.solutions.bookingapp.managereservations
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +33,7 @@ class ManageReservationsFragment : Fragment(),
 
 
     private var isItemClicked = false
-    private var savedPosition: Int = -1
+
 
     //TODO show all my reservations in RecyclerView and let user to cancel chosen one
 
@@ -48,9 +47,9 @@ class ManageReservationsFragment : Fragment(),
             container,
             false)
 
-
-
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
+        viewModel.savedPosition = -1
 
         viewModel.dataLoadCompleted.observe(viewLifecycleOwner) {
             if (!it) {
@@ -62,7 +61,6 @@ class ManageReservationsFragment : Fragment(),
                 viewModel.filteredList = mutableListOf()
                 binding.clProgressbar2.visibility = View.GONE
                 binding.btnBackToSummary.isClickable = true
-                Log.d(TAG, "bookingListFromDB size is ${viewModel.bookingListFromDB.size} ")
                 viewModel.filterBookingList()
                 adapter = MyReservationItemAdapter(
                     viewModel.filteredList,
@@ -83,10 +81,8 @@ class ManageReservationsFragment : Fragment(),
 
 
         binding.buttonCancelReservation.setOnClickListener {
-            Log.d(TAG, "buttonCancelReservation clicked")
 
             getConfirmationFromDialog()
-
         }
 
         binding.btnBackToSummary.setOnClickListener {
@@ -95,28 +91,24 @@ class ManageReservationsFragment : Fragment(),
         return binding.root
     }
 
-    //TODO How do i change background color on single recyclerView item?!?!?!
     override fun onItemClick(position: Int) {
-        Log.d(TAG,
-            "onItemClick started, recyclerview childcount ${binding.recyclerView.childCount}")
 
-        if (!isItemClicked && savedPosition == -1) {
-            savedPosition = position
+
+        if (!isItemClicked && viewModel.savedPosition == -1) {
+            viewModel.savedPosition = position
             isItemClicked = true
             binding.buttonCancelReservation.isEnabled = true
             binding.buttonCancelReservation.setBackgroundColor(Color.RED)
         } else {
-            if (isItemClicked && savedPosition == position) {
-                savedPosition = -1
+            if (isItemClicked && viewModel.savedPosition == position) {
+                viewModel.savedPosition = -1
                 isItemClicked = false
                 binding.buttonCancelReservation.isEnabled = false
                 binding.buttonCancelReservation.setBackgroundColor(Color.LTGRAY)
-
             }
         }
 
-        Log.d(TAG,
-            "isItemClicked is $isItemClicked, savedPosition is $savedPosition, position is $position")
+
     }
 
     private fun getConfirmationFromDialog() {
@@ -136,15 +128,14 @@ class ManageReservationsFragment : Fragment(),
             }
             show()
         }
-        Log.d(TAG, "getConfirmationFromDialog ended, confirmation is $confirmation")
 
     }
 
     private fun deleteItemFromDB(conf: Boolean) {
-        Log.d(TAG, "deleteItemFromDB started, conf is $conf")
+
         if (conf) {
-            viewModel.filteredList.removeAt(savedPosition)
             viewModel.deleteBookingFromDB()
+            viewModel.filteredList.removeAt(viewModel.savedPosition)
             adapter = MyReservationItemAdapter(
                 viewModel.filteredList,
                 viewModel.currentUserID,
@@ -157,11 +148,22 @@ class ManageReservationsFragment : Fragment(),
 
             binding.buttonCancelReservation.isEnabled = false
             binding.buttonCancelReservation.setBackgroundColor(Color.LTGRAY)
-            savedPosition = -1
+            viewModel.savedPosition = -1
+            isItemClicked = false
+        } else {
+            adapter = MyReservationItemAdapter(
+                viewModel.filteredList,
+                viewModel.currentUserID,
+                requireContext(),
+                -1,
+                false,
+                this,
+            )
+            binding.recyclerView.adapter = adapter
+            binding.buttonCancelReservation.isEnabled = false
+            binding.buttonCancelReservation.setBackgroundColor(Color.LTGRAY)
+            viewModel.savedPosition = -1
             isItemClicked = false
         }
-//        else {
-//            Log.d(TAG, "doing nothing")
-//        }
     }
 }

@@ -59,7 +59,7 @@ class TimeItemAdapter(
 
     override fun getItemCount() = timeItemDataList.size
 
-     inner class TimeItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+    inner class TimeItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
         val layout: ConstraintLayout = itemView.rv_managereservations_item_layout!!

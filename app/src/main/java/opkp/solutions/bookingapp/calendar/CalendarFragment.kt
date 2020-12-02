@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -70,9 +69,9 @@ class CalendarFragment : Fragment() {
 
         viewModel.loadBookingsFromDB()
 
-        viewModel.mapTimetoCourts = HashMap<String, List<Int>>()
+        viewModel.mapTimeToCourts = HashMap<String, List<Int>>()
         Log.d(TAG,
-            "map time to courts is ${viewModel.mapTimetoCourts.isEmpty()}, bookingDatabase is ${viewModel.bookingListFromDB}")
+            "map time to courts is ${viewModel.mapTimeToCourts.isEmpty()}, bookingDatabase is ${viewModel.bookingListFromDB}")
 
         binding.calendarview.setOnDateChangeListener { _, i, i2, i3 ->
             date = "$i3/${i2 + 1}/$i"
